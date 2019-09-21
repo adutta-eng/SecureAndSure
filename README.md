@@ -4,4 +4,4 @@ Description:
     Android App. 
 
 Team Members: 
-    Raghav Saini Karan Sodhi Aishani Dutta Tony Tan Abhinav Pappu PM: Clara Wei
+    Raghav Saini, Karan Sodhi, Aishani Dutta, Tony Tan, Abhinav Pappu PM: Clara Wei
