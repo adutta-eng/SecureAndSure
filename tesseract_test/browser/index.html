@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>tessaract.js</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+</head>
+
+<body>
+
+		<div class="container">
+			<div class="row">
+
+				<div class="col-sm-12">
+
+					<h1>Tessaract</h1>
+
+					<img src='../images/id.jpg' alt="" width="300">
+
+					<hr>
+
+
+					<span id="progress"></span>
+					<h6>Result</h6>
+
+
+					<div id="result"></div>
+
+
+				</div>
+
+			</div>
+		</div>
+
+	<script src="../node_modules/jquery/jquery-3.3.1.slim.min.js"></script>
+    <script src="../node_modules/tesseract.js/dist/tesseract.min.js"></script>
+
+	<script>
+
+		const { TesseractWorker } = Tesseract;
+		const worker = new TesseractWorker({
+      		workerPath: '../node_modules/tesseract.js/dist/worker.min.js',
+      		angPath: '../lang-data',
+      		corePath: '../node_modules/tesseract.js-core/tesseract-core.wasm.js',
+    	});
+
+
+
+		let img = new Image()
+		img.src = '../images/id.jpg'
+		img.onload = function(){
+
+			worker.recognize(img).progress((progress)=>{
+
+				if(progress.status === "recognizing text"){
+					$('#progress').text(progress.progress*100 + "%");
+				}
+			}).then((result)=>{
+
+				$('#result').text(result.text);
+
+			})
+
+		}
+
+	</script>
+
+
+
+
+</body>
+</html>
