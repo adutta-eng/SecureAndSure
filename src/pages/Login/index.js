@@ -1,5 +1,7 @@
 import React from "react";
 import { TextField, Button } from '@material-ui/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 
 import './styles.sass';
 
@@ -7,6 +9,11 @@ export default class Login extends React.Component {
   render() {
     return (
       <div className="login-page">
+        <div className="header">
+          {/* This icon is temporary (until we have an actual icon) */}
+          <FontAwesomeIcon className="icon" icon={faShieldAlt}/>
+        </div>
+
         <div className="container">
           <div className="login-form">
             <div className="title">Login</div>

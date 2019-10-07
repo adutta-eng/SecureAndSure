@@ -4,22 +4,26 @@
   align-items: center
   height: 100vh
   width: 100vw
+  background-color: lighten(#3f51b5, 50%)
+
+  .header
+    position: absolute
+    top: 50px
+    .icon
+      font-size: 4em
+      color: #3f51b5
 
   .container
-    // width: 50%
-    // margin: auto
-
     width: 60%
     display: flex
-    // height: 500px
-    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)
     border-radius: 10px
-    // border: thin solid #777777
-    // border-radius: 15px
     position: relative
+    background-color: white
+    overflow: hidden
+    border: #3f51b5 thin solid
 
     .login-form, .signup-form
-      margin: 50px
+      padding: 50px
       flex: 1
       display: flex
       flex-direction: column
@@ -43,6 +47,7 @@
     .separator
       align-self: stretch
       min-width: 2px
-      background-color: #999999
+      background-color: #3f51b5
+      opacity: .8
     
     
