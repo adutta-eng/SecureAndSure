@@ -1,73 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>tessaract.js</title>
 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<head>
+  <meta charset="UTF-8">
+  <title>tessaract.js</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 
 <body>
 
-		<div class="container">
-			<div class="row">
+  <div class="container">
+    <div class="row">
 
-				<div class="col-sm-12">
+      <div class="col-sm-12">
 
-					<h1>Tessaract</h1>
+        <h1>Tessaract</h1>
 
-					<img src='../images/id.jpg' alt="" width="300">
+        <script>
 
-					<hr>
+          window.addEventListener('load', function () {
+            document.querySelector('input[type="file"]').addEventListener('change', function () {
+              $('#result').text("");
+              if (this.files && this.files[0]) {
+                var img = document.querySelector('img');
+                img.src = URL.createObjectURL(this.files[0]);
+                const { TesseractWorker } = Tesseract;
+                const worker = new TesseractWorker({
+                  workerPath: '../node_modules/tesseract.js/dist/worker.min.js',
+                  angPath: '../lang-data',
+                  corePath: '../node_modules/tesseract.js-core/tesseract-core.wasm.js',
+                });
+
+                img.onload = function () {
+
+                  worker.recognize(img).progress((progress) => {
+
+                    if (progress.status === "recognizing text") {
+                      $('#progress').text(progress.progress * 100 + "%");
+                    }
+                  }).then((result) => {
+
+                    $('#result').text(result.text);
+
+                  })
+
+                }
+              }
+            });
+            // Grab elements, create settings, etc.
+            var video = document.getElementById('video');
+
+            // Get access to the camera!
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+              // Not adding `{ audio: true }` since we only want video now
+              navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+                //video.src = window.URL.createObjectURL(stream);
+                video.srcObject = stream;
+                video.play();
+              });
+              var canvas = document.getElementById('canvas');
+              var context = canvas.getContext('2d');
+              var video = document.getElementById('video');
+
+              // Trigger photo take
+              document.getElementById("snap").addEventListener("click", function () {
+                context.drawImage(video, 0, 0, 640, 480);
+                const { TesseractWorker } = Tesseract;
+                const worker = new TesseractWorker({
+                  workerPath: '../node_modules/tesseract.js/dist/worker.min.js',
+                  angPath: '../lang-data',
+                  corePath: '../node_modules/tesseract.js-core/tesseract-core.wasm.js',
+                });
+
+                var image = new Image();
+                image.src = canvas.toDataURL("image/png");
+
+                image.onload = function () {
+
+                  worker.recognize(image).progress((progress) => {
+
+                    if (progress.status === "recognizing text") {
+                      $('#progress').text(progress.progress * 100 + "%");
+                    }
+                  }).then((result) => {
+
+                    $('#result').text(result.text);
+
+                  })
+
+                }
+
+              });
+
+            }
+
+          });
+
+        </script>
+
+        <input type='file' />
+        <br><img id="myImg" src="#" alt="" width="500">
+
+        <hr>
+
+        <span id="progress"></span>
+        <h6>Result</h6>
 
 
-					<span id="progress"></span>
-					<h6>Result</h6>
+        <div id="result"></div>
 
 
-					<div id="result"></div>
+      </div>
 
+    </div>
+  </div>
 
-				</div>
+  <script src="../node_modules/jquery/jquery-3.3.1.slim.min.js"></script>
+  <script src="../node_modules/tesseract.js/dist/tesseract.min.js"></script>
 
-			</div>
-		</div>
-
-	<script src="../node_modules/jquery/jquery-3.3.1.slim.min.js"></script>
-    <script src="../node_modules/tesseract.js/dist/tesseract.min.js"></script>
-
-	<script>
-
-		const { TesseractWorker } = Tesseract;
-		const worker = new TesseractWorker({
-      		workerPath: '../node_modules/tesseract.js/dist/worker.min.js',
-      		angPath: '../lang-data',
-      		corePath: '../node_modules/tesseract.js-core/tesseract-core.wasm.js',
-    	});
-
-
-
-		let img = new Image()
-		img.src = '../images/id.jpg'
-		img.onload = function(){
-
-			worker.recognize(img).progress((progress)=>{
-
-				if(progress.status === "recognizing text"){
-					$('#progress').text(progress.progress*100 + "%");
-				}
-			}).then((result)=>{
-
-				$('#result').text(result.text);
-
-			})
-
-		}
-
-	</script>
-
-
+  <video id="video" width="640" height="480" autoplay></video>
+  <button id="snap">Snap Photo</button>
+  <canvas id="canvas" width="640" height="480"></canvas>
 
 
 </body>
+
 </html>
