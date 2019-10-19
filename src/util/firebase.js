@@ -21,17 +21,17 @@ var firebaseConfig = {
     firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(e) {
         error = e;
       });
-      var emailKey = secureBase.ref().child('emails').push().key();
-      var passKey = secureBase.ref().child('password').push().key();
+      var emailKey = secureBase.ref().child('accounts').child('emails').push().key();
+      //var passKey = secureBase.ref().child('password').push().key();
 
       var emailUpdate = {};
-      var passUpdate = {};
+      //var passUpdate = {};
 
       emailUpdate['/emails/' + emailKey] = email;
-      passUpdate['/password/' + passKey] = password;
+      //passUpdate['/password/' + passKey] = password;
 
       secureBase.ref().update(emailUpdate);
-      secureBase.ref().update(passUpdate);
+      //secureBase.ref().update(passUpdate);
       return error;
   }
 
@@ -40,6 +40,13 @@ var firebaseConfig = {
     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(e) {
         error = e;
       });
+      var uid = firebase.auth().currentUser().uid;
+      var uidKey = secureBase.ref().child('Signed In Users').child('IDs').push().key();
+
+      var uidUpdate = {};
+      uidUpdate['/IDs/' + uidKey] = uid;
+      secureBase.ref().update(uidUpdate);
+
       return error;  
   }
 
@@ -49,5 +56,6 @@ var firebaseConfig = {
       }).catch(function(e) {
           error = e;
       });
+      secureBase.ref().child('Signed In Users').child('IDs').child(firebase.auth().currentUser().uid).remove();
       return error;
   }
