@@ -1,19 +1,36 @@
 .document-view
-    .scroll
-        overflow-x: scroll
-        white-space: nowrap
-        width: 100vw 
-        img
-            height: 250px
-            border: 3px#294addda solid
-            margin: 10px 10px
-            padding: 5px
-            border-radius: 12px
-            box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 5px 0px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 3px 1px -2px
-    .storedInfo
+    .docs
         display: flex
-        img
-            width: 50%
-            flex: 1
-        .infoTable
-            flex: 1            
+        flex-wrap: wrap
+        // justify-content: space-evenly
+        max-width: 1000px
+        .document
+            // margin-right: 25px
+            margin: 0 12.5px
+            margin-top: 30px
+            width: 30%
+            background-color: #7773ff
+            // padding: 1px
+            img
+                width: 95%
+                margin: 3px auto
+                display: block
+
+    // .scroll
+    //     overflow-x: scroll
+    //     white-space: nowrap
+    //     width: 100vw 
+    //     img
+    //         height: 250px
+    //         border: 3px#294addda solid
+    //         margin: 10px 10px
+    //         padding: 5px
+    //         border-radius: 12px
+    //         box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 5px 0px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 3px 1px -2px
+    // .storedInfo
+    //     display: flex
+    //     img
+    //         width: 50%
+    //         flex: 1
+    //     .infoTable
+    //         flex: 1            

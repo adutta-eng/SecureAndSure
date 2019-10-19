@@ -6,9 +6,10 @@ import socialSecurityCartoon from "assets/socialSecurityCartoon.png"
 import birthCertificateCartoon from "assets/birthCertificateCartoon.png"
 import birthCertificateActual from "assets/birthCertificateActual.jpg"
 import actualFemaleLicense from "assets/actualFemaleLicense.jpg"
-import { Paper, TableRow, TableHead, TableCell, TableBody, Table } from '@material-ui/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUserShield } from '@fortawesome/free-solid-svg-icons'
+import { CardMedia, Card, CardContent, Typography, ListItem, List, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
 import "./style.sass"
-
 const typeToImage = {
     driver: femaleLicenseStock,
     passport: passportClipart,
@@ -24,7 +25,7 @@ export default class DocumentView extends React.Component {
             clickedDocument: "",
             documents: [
                 {
-                    type: "driver",
+                    type: "Driver's License",
                     img: actualFemaleLicense,
                     parsedInfo: [
                         { NAME: "JANE Q" },
@@ -33,22 +34,37 @@ export default class DocumentView extends React.Component {
                     ],
                 },
                 {
-                    type: "birth",
+                    type: "Birth Certificate",
                     img: birthCertificateActual,
                     parsedInfo: [
-                        {NAME: "EXAMPLE"},
-                        {SEX: "FEMALE"},
-                        {DOB: "SEPTEMBER 14, 1990"}
+                        { NAME: "EXAMPLE" },
+                        { SEX: "FEMALE" },
+                        { DOB: "SEPTEMBER 14, 1990" }
                     ]
                 },
                 {
-                    type: "passport",
+                    type: "Passport",
+                    parsedInfo: [
+                        { NAME: "EXAMPLE" },
+                        { SEX: "FEMALE" },
+                        { DOB: "SEPTEMBER 14, 1990" }
+                    ]
                 },
                 {
-                    type: "social"
+                    type: "Social Security Card",
+                    parsedInfo: [
+                        { NAME: "EXAMPLE" },
+                        { SEX: "FEMALE" },
+                        { DOB: "SEPTEMBER 14, 1990" }
+                    ]
                 },
                 {
-                    type: "driverMale"
+                    type: "driverMale",
+                    parsedInfo: [
+                        { NAME: "EXAMPLE" },
+                        { SEX: "FEMALE" },
+                        { DOB: "SEPTEMBER 14, 1990" }
+                    ]
                 }
             ]
         }
@@ -61,7 +77,33 @@ export default class DocumentView extends React.Component {
     render() {
         return (
             <div className="document-view">
-                <div className="scroll">
+                <div className="docs">
+                    {this.state.documents.map(document => (
+                        <Card className="document">
+                            <CardMedia className="document-photo">
+                                <img src={document.img}></img>
+                            </CardMedia>
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="h2">
+                                    {document.type}
+                                </Typography>
+                                <List className="details">
+                                    {document.parsedInfo.map(item => (
+                                        <ListItem>
+                                            <ListItemAvatar>
+                                                <Avatar>
+                                                    <FontAwesomeIcon icon={faUserShield} />
+                                                </Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText primary={Object.entries(item)[0][1]} secondary={Object.entries(item)[0][0]}></ListItemText>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+                {/* <div className="scroll">
                     {this.state.documents.map(document => (
                         <img alt="Icon representing stored document"
                             onClick={() => this.handleScrollClick(document)}
@@ -85,7 +127,7 @@ export default class DocumentView extends React.Component {
                             </Table>
                         </Paper>
                     </div>
-                }
+                } */}
             </div>
         );
     }
