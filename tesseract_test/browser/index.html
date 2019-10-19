@@ -2,126 +2,173 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <title>tessaract.js</title>
+    <meta charset="UTF-8">
+    <title>tessaract.js</title>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 
 <body>
 
-  <div class="container">
-    <div class="row">
+    <div class="container">
+        <div class="row">
 
-      <div class="col-sm-12">
+            <div class="col-sm-12">
 
-        <h1>Tessaract</h1>
+                <h1>Tessaract</h1>
 
-        <script>
+                <script>
 
-          window.addEventListener('load', function () {
-            document.querySelector('input[type="file"]').addEventListener('change', function () {
-              $('#result').text("");
-              if (this.files && this.files[0]) {
-                var img = document.querySelector('img');
-                img.src = URL.createObjectURL(this.files[0]);
-                const { TesseractWorker } = Tesseract;
-                const worker = new TesseractWorker({
-                  workerPath: '../node_modules/tesseract.js/dist/worker.min.js',
-                  angPath: '../lang-data',
-                  corePath: '../node_modules/tesseract.js-core/tesseract-core.wasm.js',
-                });
+                    window.addEventListener('load', function () {
+                        document.querySelector('input[type="file"]').addEventListener('change', function () {
+                            $('#result').text("");
+                            if (this.files && this.files[0]) {
+                                var img = document.querySelector('img');
+                                img.src = URL.createObjectURL(this.files[0]);
+                                const { TesseractWorker } = Tesseract;
+                                const worker = new TesseractWorker({
+                                    workerPath: '../node_modules/tesseract.js/dist/worker.min.js',
+                                    angPath: '../lang-data',
+                                    corePath: '../node_modules/tesseract.js-core/tesseract-core.wasm.js',
+                                });
 
-                img.onload = function () {
+                                img.onload = function () {
 
-                  worker.recognize(img).progress((progress) => {
+                                    worker.recognize(img).progress((progress) => {
 
-                    if (progress.status === "recognizing text") {
-                      $('#progress').text(progress.progress * 100 + "%");
-                    }
-                  }).then((result) => {
+                                        if (progress.status === "recognizing text") {
+                                            $('#progress').text(progress.progress * 100 + "%");
+                                        }
+                                    }).then((result) => {
 
-                    $('#result').text(result.text);
+                                        $('#result').text(result.text);
 
-                  })
+                                    })
 
-                }
-              }
-            });
-            // Grab elements, create settings, etc.
-            var video = document.getElementById('video');
+                                }
+                            }
+                        });
+                        // Grab elements, create settings, etc.
+                        var video = document.getElementById('video');
 
-            // Get access to the camera!
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-              // Not adding `{ audio: true }` since we only want video now
-              navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
-                //video.src = window.URL.createObjectURL(stream);
-                video.srcObject = stream;
-                video.play();
-              });
-              var canvas = document.getElementById('canvas');
-              var context = canvas.getContext('2d');
-              var video = document.getElementById('video');
+                        // Get access to the camera!
+                        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                            // Not adding `{ audio: true }` since we only want video now
+                            navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+                                //video.src = window.URL.createObjectURL(stream);
+                                video.srcObject = stream;
+                                video.play();
+                            });
+                            var canvas = document.getElementById('canvas');
+                            var context = canvas.getContext('2d');
+                            var video = document.getElementById('video');
 
-              // Trigger photo take
-              document.getElementById("snap").addEventListener("click", function () {
-                context.drawImage(video, 0, 0, 640, 480);
-                const { TesseractWorker } = Tesseract;
-                const worker = new TesseractWorker({
-                  workerPath: '../node_modules/tesseract.js/dist/worker.min.js',
-                  angPath: '../lang-data',
-                  corePath: '../node_modules/tesseract.js-core/tesseract-core.wasm.js',
-                });
+                            // Trigger photo take
+                            document.getElementById("snap").addEventListener("click", function () {
+                                context.drawImage(video, 0, 0, 640, 480);
+                                const { TesseractWorker } = Tesseract;
+                                const worker = new TesseractWorker({
+                                    workerPath: '../node_modules/tesseract.js/dist/worker.min.js',
+                                    angPath: '../lang-data',
+                                    corePath: '../node_modules/tesseract.js-core/tesseract-core.wasm.js',
+                                });
 
-                var image = new Image();
-                image.src = canvas.toDataURL("image/png");
+                                var x, sx, sy, r, g, b, a, dstOff, srcOff, wt, cx, cy, scy, scx,
+                                    weights = [0, -1, 0, -1, 5, -1, 0, -1, 0],
+                                    katet = Math.round(Math.sqrt(weights.length)),
+                                    half = (katet * 0.5) | 0,
+                                    dstData = context.createImageData(canvas.width, canvas.height),
+                                    dstBuff = dstData.data,
+                                    srcBuff = context.getImageData(0, 0, canvas.width, canvas.height).data,
+                                    y = canvas.height;
 
-                image.onload = function () {
+                                while (y--) {
+                                    x = canvas.width;
+                                    while (x--) {
+                                        sy = y;
+                                        sx = x;
+                                        dstOff = (y * canvas.width + x) * 4;
+                                        r = 0;
+                                        g = 0;
+                                        b = 0;
+                                        a = 0;
 
-                  worker.recognize(image).progress((progress) => {
+                                        for (cy = 0; cy < katet; cy++) {
+                                            for (cx = 0; cx < katet; cx++) {
+                                                scy = sy + cy - half;
+                                                scx = sx + cx - half;
 
-                    if (progress.status === "recognizing text") {
-                      $('#progress').text(progress.progress * 100 + "%");
-                    }
-                  }).then((result) => {
+                                                if (scy >= 0 && scy < canvas.height && scx >= 0 && scx < canvas.width) {
+                                                    srcOff = (scy * canvas.width + scx) * 4;
+                                                    wt = weights[cy * katet + cx];
 
-                    $('#result').text(result.text);
+                                                    r += srcBuff[srcOff] * wt;
+                                                    g += srcBuff[srcOff + 1] * wt;
+                                                    b += srcBuff[srcOff + 2] * wt;
+                                                    a += srcBuff[srcOff + 3] * wt;
+                                                }
+                                            }
+                                        }
 
-                  })
-
-                }
-
-              });
-
-            }
-
-          });
-
-        </script>
-
-        <input type='file' />
-        <br><img id="myImg" src="#" alt="" width="500">
-
-        <hr>
-
-        <span id="progress"></span>
-        <h6>Result</h6>
+                                        dstBuff[dstOff] = r * .2 + srcBuff[dstOff] * (1 - .2);
+                                        dstBuff[dstOff + 1] = g * .2 + srcBuff[dstOff + 1] * (1 - .2);
+                                        dstBuff[dstOff + 2] = b * .2 + srcBuff[dstOff + 2] * (1 - .2);
+                                        dstBuff[dstOff + 3] = srcBuff[dstOff + 3];
+                                    }
+                                }
+                                context.putImageData(dstData, 0, 0);
 
 
-        <div id="result"></div>
+
+                                var image = new Image();
+                                image.src = canvas.toDataURL("image/png");
+
+                                image.onload = function () {
+
+                                    worker.recognize(image).progress((progress) => {
+
+                                        if (progress.status === "recognizing text") {
+                                            $('#progress').text(progress.progress * 100 + "%");
+                                        }
+                                    }).then((result) => {
+
+                                        $('#result').text(result.text);
+
+                                    })
+
+                                }
+
+                            });
+
+                        }
+
+                    });
+
+                </script>
+
+                <input type='file' />
+                <br><img id="myImg" src="#" alt="" width="500">
+
+                <hr>
+
+                <span id="progress"></span>
+                <h6>Result</h6>
 
 
-      </div>
+                <div id="result"></div>
 
+
+            </div>
+
+        </div>
     </div>
-  </div>
 
-  <script src="../node_modules/jquery/jquery-3.3.1.slim.min.js"></script>
-  <script src="../node_modules/tesseract.js/dist/tesseract.min.js"></script>
+    <script src="../node_modules/jquery/jquery-3.3.1.slim.min.js"></script>
+    <script src="../node_modules/tesseract.js/dist/tesseract.min.js"></script>
 
-  <video id="video" width="640" height="480" autoplay></video>
-  <button id="snap">Snap Photo</button>
-  <canvas id="canvas" width="640" height="480"></canvas>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="snap">Snap Photo</button>
+    <canvas id="canvas" width="640" height="480"></canvas>
 
 
 </body>
