@@ -4,69 +4,17 @@ import maleLicenseStock from "assets/maleLicenseStock.jpg"
 import passportClipart from "assets/passportClipart.jpg"
 import socialSecurityCartoon from "assets/socialSecurityCartoon.png"
 import birthCertificateCartoon from "assets/birthCertificateCartoon.png"
-import birthCertificateActual from "assets/birthCertificateActual.jpg"
-import actualFemaleLicense from "assets/actualFemaleLicense.jpg"
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserShield } from '@fortawesome/free-solid-svg-icons'
 import { CardMedia, Card, CardContent, Typography, ListItem, List, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
 import "./style.sass"
-const typeToImage = {
-    driver: femaleLicenseStock,
-    passport: passportClipart,
-    birth: birthCertificateCartoon,
-    social: socialSecurityCartoon,
-    driverMale: maleLicenseStock
-}
 
 export default class DocumentView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             clickedDocument: "",
-            documents: [
-                {
-                    type: "Driver's License",
-                    img: actualFemaleLicense,
-                    parsedInfo: [
-                        { NAME: "JANE Q" },
-                        { ISS: "05/01/2016" },
-                        { EXP: "11/14/2020" },
-                    ],
-                },
-                {
-                    type: "Birth Certificate",
-                    img: birthCertificateActual,
-                    parsedInfo: [
-                        { NAME: "EXAMPLE" },
-                        { SEX: "FEMALE" },
-                        { DOB: "SEPTEMBER 14, 1990" }
-                    ]
-                },
-                {
-                    type: "Passport",
-                    parsedInfo: [
-                        { NAME: "EXAMPLE" },
-                        { SEX: "FEMALE" },
-                        { DOB: "SEPTEMBER 14, 1990" }
-                    ]
-                },
-                {
-                    type: "Social Security Card",
-                    parsedInfo: [
-                        { NAME: "EXAMPLE" },
-                        { SEX: "FEMALE" },
-                        { DOB: "SEPTEMBER 14, 1990" }
-                    ]
-                },
-                {
-                    type: "driverMale",
-                    parsedInfo: [
-                        { NAME: "EXAMPLE" },
-                        { SEX: "FEMALE" },
-                        { DOB: "SEPTEMBER 14, 1990" }
-                    ]
-                }
-            ]
         }
     }
     handleScrollClick(document) {
@@ -78,7 +26,7 @@ export default class DocumentView extends React.Component {
         return (
             <div className="document-view">
                 <div className="docs">
-                    {this.state.documents.map(document => (
+                    {this.props.documents.map(document => (
                         <Card className="document">
                             <CardMedia className="document-photo">
                                 <img src={document.img}></img>
@@ -91,7 +39,7 @@ export default class DocumentView extends React.Component {
                                     {document.parsedInfo.map(item => (
                                         <ListItem>
                                             <ListItemAvatar>
-                                                <Avatar>
+                                                <Avatar className="avatar">
                                                     <FontAwesomeIcon icon={faUserShield} />
                                                 </Avatar>
                                             </ListItemAvatar>
