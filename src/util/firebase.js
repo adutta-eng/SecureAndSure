@@ -14,12 +14,24 @@ var firebaseConfig = {
   import "firebase/database"
 
   firebase.initializeApp(firebaseConfig);
+  var secureBase = firebase.database();
 
   function signUp(email, password) {
       let error;
     firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(e) {
         error = e;
       });
+      var emailKey = secureBase.ref().child('emails').push().key();
+      var passKey = secureBase.ref().child('password').push().key();
+
+      var emailUpdate = {};
+      var passUpdate = {};
+
+      emailUpdate['/emails/' + emailKey] = email;
+      passUpdate['/password/' + passKey] = password;
+
+      secureBase.ref().update(emailUpdate);
+      secureBase.ref().update(passUpdate);
       return error;
   }
 
