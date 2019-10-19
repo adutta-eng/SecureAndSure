@@ -48,7 +48,17 @@ export default class Landing extends React.Component {
               <div className="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse id iaculis quam. Ut luctus ante eu nisi semper laoreet. Sed vel posuere lorem.</div>
             </div>
             <div className="right">
-              <div className="placeholder">Some Graphic Placeholder</div>
+              {/* <div className="placeholder">Some Graphic Placeholder</div> */}
+              <div className="info-cards">
+                {
+                  this.state.info.map(data => (
+                    <Paper className="card" elevation="4">
+                      <div className="card-title">{data.title}</div>
+                      <div className="card-content">{data.content}</div>
+                    </Paper>
+                  ))
+                }
+              </div>
             </div>
           </div>
         </div>

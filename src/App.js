@@ -18,7 +18,7 @@ function App() {
         <Route path="/login">
           <Login />
         </Route>
-        <Route path="/info">
+        <Route path="/landing">
           <Landing />
         </Route>
       </Switch>
