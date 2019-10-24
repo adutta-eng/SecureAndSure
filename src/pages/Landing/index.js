@@ -11,16 +11,16 @@ export default class Landing extends React.Component {
     this.state = {
       info: [
         {
-          "title": "Lorem",
-          "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse id iaculis quam. Ut luctus ante eu nisi semper laoreet. Sed vel posuere lorem. Vivamus at nisi elit. Sed sit amet lectus rhoncus, elementum dolor lobortis, hendrerit ex. Vestibulum in lectus at ex viverra pharetra.",
+          "title": "What",
+          "content": "An application which securely stores your identity documents for retrieval at any place and any time.",
         },
         {
-          "title": "Ipsum",
-          "content": "Sed sed euismod purus. Duis gravida erat tempus ex efficitur ultrices id vitae est. In hac habitasse platea dictumst. Sed fringilla, lacus nec vestibulum consequat, erat enim pellentesque lectus, a efficitur libero augue a orci. Interdum et malesuada fames ac ante ipsum primis in faucibus.",
+          "title": "Why",
+          "content": "Originally intended to serve America’s homeless population, Secure&Sure provides a secure online storage platform for those who lack a reliable physical space to keep their important documents.",
         },
         {
-          "title": "Dolor",
-          "content": "Phasellus maximus augue sed augue ornare laoreet. Sed volutpat, diam a sodales lobortis, quam lectus maximus neque, a efficitur elit neque vel est. Sed sed ultrices tortor. Curabitur elit mauris, blandit non elementum vitae, semper eu velit. Ut luctus dui eget arcu vulputate pulvinar sit amet ac risus.",
+          "title": "How",
+          "content": "Our use of RSA in conjunction with Tony Tan™ ensures protection from identity theft and enables our users to store their documents on the cloud for easy access without the fear of fraud or identity theft.",
         }
       ]
     }
@@ -45,7 +45,7 @@ export default class Landing extends React.Component {
           <div className="container">
             <div className="left">
               <div className="title">Secure & Sure</div>
-              <div className="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse id iaculis quam. Ut luctus ante eu nisi semper laoreet. Sed vel posuere lorem.</div>
+              <div className="description">Brought to you by Bottom Text</div>
             </div>
             <div className="right">
               {/* <div className="placeholder">Some Graphic Placeholder</div> */}
