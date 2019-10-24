@@ -7,48 +7,77 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 import birthCertificateActual from "assets/birthCertificateActual.jpg"
 import actualFemaleLicense from "assets/actualFemaleLicense.jpg"
-
+import realPassport2 from "assets/realPassport2.png"
+import legitSocial from "assets/legitSocial.jpg"
+import marriageCertificate from "assets/marriageCertificate.jpg"
 const documents = [
   {
     type: "Driver's License",
     img: actualFemaleLicense,
     parsedInfo: [
-      { NAME: "JANE Q" },
-      { ISS: "05/01/2016" },
+      { FIRST_NAME: "JANE Q" },
+      { LAST_NAME: "PUBLIC"},
+      { LICENSE_NO: "P142-4558-7924"},
+      { ADDRESS: "1234 MAIN STREET\nSPRINGFIELD, IL 62723"},
+      { DOB: "11/14/1987"},
       { EXP: "11/14/2020" },
+      { ISS: "05/01/2016" },
+      { CLASS: "D"},
+      { END: "NONE"},
+      { REST: "NONE"},
+      { SEX: "F"},
+      { WEIGHT: "145 lbs"},
+      { HEIGHT: "5'-6"},
+      { EYES: "BRN"},
+      { TYPE: "ORG"},
+      { DD: "20160210993DT0328"}
     ],
   },
   {
     type: "Birth Certificate",
     img: birthCertificateActual,
     parsedInfo: [
-      { NAME: "EXAMPLE" },
+      { NAME: "JANE Q PUBLIC" },
       { SEX: "FEMALE" },
       { DOB: "SEPTEMBER 14, 1990" }
     ]
   },
   {
     type: "Passport",
+    img: realPassport2,
     parsedInfo: [
-      { NAME: "EXAMPLE" },
-      { SEX: "FEMALE" },
-      { DOB: "SEPTEMBER 14, 1990" }
+      { TYPE: "P"},
+      { CODE: "USA"},
+      { PASSPORT_NO: "451213660"},
+      { SURNAME: "HASTINGS" },
+      { GIVEN_NAME: "THOMAS"},
+      { NATIONALITY: "UNITED STATES OF AMERICA"},
+      { DOB: "9 FEB 1978" },
+      { PLACE_OF_BIRTH: "CALIFORNIA, USA"},
+      { SEX: "M" },
+      { DATE_OF_ISSUE: "12 JUN 2012"},
+      { DATE_OF_EXPIRATION: "12 JUN 2022"}
     ]
   },
   {
     type: "Social Security Card",
+    img: legitSocial,
     parsedInfo: [
-      { NAME: "EXAMPLE" },
-      { SEX: "FEMALE" },
-      { DOB: "SEPTEMBER 14, 1990" }
+      { NAME: "AUGUST NAPOLEON ANDERSON" },
+      { ACCOUNT_NUMBER: "017-10-1312" },
+      { DATE_OF_ISSUE: "12-7-36" }
     ]
   },
   {
-    type: "driverMale",
+    type: "Marriage Certificate",
+    img: marriageCertificate,
     parsedInfo: [
-      { NAME: "EXAMPLE" },
-      { SEX: "FEMALE" },
-      { DOB: "SEPTEMBER 14, 1990" }
+      { LICENSE_NO: "2398487-0" },
+      { GROOM_NAME: "HYMAN\tVICTOR" },
+      { GROOM_AGE: "73"},
+      { BRIDE_NAME: "ANNA\tRUBIN"},
+      { GROOM_AGE: "63"},
+      { DATE_OF_MARRIAGE: "MAY 24, 1956"}
     ]
   }
 ];

@@ -6,8 +6,8 @@ import socialSecurityCartoon from "assets/socialSecurityCartoon.png"
 import birthCertificateCartoon from "assets/birthCertificateCartoon.png"
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserShield } from '@fortawesome/free-solid-svg-icons'
-import { CardMedia, Card, CardContent, Typography, ListItem, List, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
+import { faUserShield, faPlus, faCalendarDay } from '@fortawesome/free-solid-svg-icons'
+import { Paper, IconButton, Fab, CardMedia, Card, CardContent, Typography, ListItem, List, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
 import "./style.sass"
 
 export default class DocumentView extends React.Component {
@@ -50,6 +50,15 @@ export default class DocumentView extends React.Component {
                             </CardContent>
                         </Card>
                     ))}
+                    <Card className="add-doc">
+                        <Paper color= "text.primary" className="box">
+                            <a href="https://secure-and-sur3.netlify.com/add">
+                                <Fab color= "#3f51b5" aria-label="add">
+                                    <FontAwesomeIcon icon = {faPlus}/>
+                                </Fab>
+                            </a>
+                        </Paper>
+                    </Card>
                 </div>
                 {/* <div className="scroll">
                     {this.state.documents.map(document => (
