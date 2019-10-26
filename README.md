@@ -4,3 +4,9 @@ Description:
 
 Team Members: 
     Raghav Saini, Karan Sodhi, Aishani Dutta, Tony Tan, Abhinav Pappu PM: Clara Wei
+    
+Tech Stacks:
+    React, Firebase Microsoft Azure
+    JavaScript
+    
+    
