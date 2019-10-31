@@ -1,0 +1,202 @@
+<html>
+
+<head>
+    <h1>Read image:</h1>
+    Image to read:
+    <input type="file" id="inputImage" />
+    <br>
+    <br>
+    <div id="wrapper" style="width:1020px; display:table;">
+        <div id="jsonOutput" style="width:600px; display:table-cell;">
+            Response:
+            <br>
+            <br>
+            <textarea id="responseTextArea" class="UIInput" style="width:500; height:400px;"></textarea>
+            <img id="myImg" src="#" alt="" width="500">
+        </div>
+        <video id="video" width="640" height="480" autoplay></video>
+        <button id="snap">Snap Photo</button>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script>
+            $(function () {
+
+                document.querySelector('input[type="file"]').addEventListener('change', function () {
+                    var img = document.querySelector('img');
+                    img.src = URL.createObjectURL(this.files[0]);
+
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        var arrayBuffer = this.result,
+                            array = new Uint8Array(arrayBuffer);
+
+                        var subscriptionKey = "afe6f1104bd44463a808439640ba056c";
+                        var uriBase = "https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/RecognizeText";
+
+                        var params = {
+                            "language": "unk",
+                            "detectOrientation ": "true",
+                        };
+
+                        $.ajax({
+                            url: uriBase + "?" + $.param(params),
+
+                            beforeSend: function (jqXHR) {
+                                jqXHR.setRequestHeader("Content-Type", "application/octet-stream");
+                                jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+                            },
+
+                            type: "POST",
+                            processData: false,
+                            data: arrayBuffer
+                        })
+
+                            .done(function (data, textStatus, jqXHR) {
+                                // Show progress.
+                                $("#responseTextArea").val("Processing");
+                                setTimeout(function () {
+                                    // The "Operation-Location" in the response contains the URI to retrieve the recognized text.
+                                    var operationLocation = jqXHR.getResponseHeader("Operation-Location");
+
+                                    $.ajax({
+                                        url: operationLocation,
+                                        beforeSend: function (jqXHR) {
+                                            jqXHR.setRequestHeader("Content-Type", "application/json");
+                                            jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+                                        },
+                                        type: "GET",
+                                    })
+
+                                        .done(function (data) {
+                                            var text = "";
+                                            // Show formatted JSON on webpage.
+                                            for (i in data.recognitionResult.lines) {
+                                                text += data.recognitionResult.lines[i].text + "\n";
+                                            }
+                                            $("#responseTextArea").val(text);
+                                        })
+
+                                        .fail(function (jqXHR, textStatus, errorThrown) {
+                                            // Display error message.
+                                            var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+                                            errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+                                                jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                                            alert(errorString);
+                                        });
+                                }, 2000);
+                            })
+
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                // Put the JSON description into the text area.
+                                $("#responseTextArea").val(JSON.stringify(jqXHR, null, 2));
+
+                                // Display error message.
+                                var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+                                errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+                                    jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                                alert(errorString);
+                            })
+                    }
+                    reader.readAsArrayBuffer(this.files[0]);
+
+                }, false);
+                var video = document.getElementById('video');
+
+                // Get access to the camera!
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    // Not adding `{ audio: true }` since we only want video now
+                    navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+                        //video.src = window.URL.createObjectURL(stream);
+                        video.srcObject = stream;
+                        video.play();
+                    });
+                    var canvas = document.getElementById('canvas');
+                    var ctx = canvas.getContext('2d');
+                    var video = document.getElementById('video');
+
+                    // Trigger photo take
+                    document.getElementById("snap").addEventListener("click", function () {
+                        ctx.drawImage(video, 0, 0, 640, 480);
+
+                        let data = canvas.toDataURL('image/jpeg');
+
+                        fetch(data)
+                            .then(res => res.blob())
+                            .then(blobData => {
+
+                                var subscriptionKey = "afe6f1104bd44463a808439640ba056c";
+                                var uriBase = "https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/RecognizeText";
+
+                                var params = {
+                                    "language": "unk",
+                                    "detectOrientation ": "true",
+                                };
+                                $.ajax({
+                                    url: uriBase + "?" + $.param(params),
+
+                                    beforeSend: function (jqXHR) {
+                                        jqXHR.setRequestHeader("Content-Type", "application/octet-stream");
+                                        jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+                                    },
+
+                                    type: "POST",
+                                    processData: false,
+                                    contentType: "application/octet-stream",
+                                    data: blobData
+                                })
+
+                                    .done(function (data, textStatus, jqXHR) {
+                                        // Show progress.
+                                        $("#responseTextArea").val("Processing");
+                                        setTimeout(function () {
+                                            // The "Operation-Location" in the response contains the URI to retrieve the recognized text.
+                                            var operationLocation = jqXHR.getResponseHeader("Operation-Location");
+
+                                            $.ajax({
+                                                url: operationLocation,
+                                                beforeSend: function (jqXHR) {
+                                                    jqXHR.setRequestHeader("Content-Type", "application/json");
+                                                    jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+                                                },
+                                                type: "GET",
+                                            })
+
+                                                .done(function (data) {
+                                                    var text = "";
+                                                    // Show formatted JSON on webpage.
+                                                    for (i in data.recognitionResult.lines) {
+                                                        text += data.recognitionResult.lines[i].text + "\n";
+                                                    }
+                                                    $("#responseTextArea").val(text);
+                                                })
+
+                                                .fail(function (jqXHR, textStatus, errorThrown) {
+                                                    // Display error message.
+                                                    var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+                                                    errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+                                                        jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                                                    alert(errorString);
+                                                });
+                                        }, 2000);
+                                    })
+
+                                    .fail(function (jqXHR, textStatus, errorThrown) {
+                                        // Put the JSON description into the text area.
+                                        $("#responseTextArea").val(JSON.stringify(jqXHR, null, 2));
+
+                                        // Display error message.
+                                        var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+                                        errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+                                            jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                                        alert(errorString);
+                                    })
+
+                            })
+                    })
+                }
+            })
+
+        </script>
+</head>
+
+</html>
