@@ -18,10 +18,11 @@ var firebaseConfig = {
 
   async function signUp(email, password) {
       await firebase.auth().createUserWithEmailAndPassword(email, password)
+      var authEmail = firebase.auth().currentUser().email;
       var emailKey = secureBase.ref().child('accounts').child('emails').push().key();
       var emailUpdate = {};
 
-      emailUpdate['/emails/' + emailKey] = email;
+      emailUpdate['/emails/' + emailKey] = authEmail;
 
       await secureBase.ref().update(emailUpdate);
   }
@@ -34,6 +35,15 @@ var firebaseConfig = {
       var uidUpdate = {};
       uidUpdate['/IDs/' + uidKey] = uid;
       await secureBase.ref().update(uidUpdate); 
+  }
+
+  async function updateDatabaseWithUpload(b64) {
+    var b64Key = secureBase.ref().child('Signed In Users').child('Encrypted Uploads').push().key()
+        + firebase.auth.currentUser().uid;
+
+    var b64Update = {};
+    b64Update['/encrypted/' + b64Key] = b64;
+    await secureBase.ref().update(b64Update);
   }
 
   async function signOut() {
