@@ -5,6 +5,8 @@ import { TextField } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
+import * as firebase from "util/firebase";
+
 import birthCertificateActual from "assets/birthCertificateActual.jpg"
 import actualFemaleLicense from "assets/actualFemaleLicense.jpg"
 import realPassport2 from "assets/realPassport2.png"
@@ -88,6 +90,12 @@ export default class Home extends React.Component {
     this.state = {
       filteredDocuments: documents,
     }
+  }
+
+  componentDidMount() {
+    firebase.onAddDocument(documents => {
+      this.setState({filteredDocuments: Object.values(documents)});
+    });
   }
 
   handleSearch(searchText) {
