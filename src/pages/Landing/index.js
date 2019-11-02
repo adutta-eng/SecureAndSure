@@ -71,20 +71,6 @@ export default class Landing extends React.Component {
             </div>
           </div>
         </div>
-
-        
-        
-        {/* <div className="info-cards">
-          {
-            this.state.infoCardData.map(data => (
-              <Paper className="card" elevation="4">
-                <div className="card-title">{data.title}</div>
-                <div className="card-content">{data.content}</div>
-              </Paper>
-            ))
-          }
-        </div> */}
-        {/* <div>Login/Signup</div> */}
       </div>
     )
   }

@@ -13,13 +13,13 @@ function App() {
       {/* A <Switch> looks through its children <Route>s and renders the first one that matches the current URL. */}
       <Switch>
         <Route exact path="/">
-          <Landing />
+          <Landing/>
         </Route>
         <Route path="/login">
-          <Login />
+          <Login/>
         </Route>
         <Route path="/home">
-          <Home />
+          <Home/>
         </Route>
       </Switch>
     </Router>
