@@ -1,14 +1,17 @@
 import React from 'react';
-import './styles.sass';
 import { Paper, Button } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 
+import * as firebaseUtil from 'util/firebase';
+import './styles.sass';
+
 export default class Landing extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isUserSignedIn: false,
       info: [
         {
           "title": "What",
@@ -26,7 +29,12 @@ export default class Landing extends React.Component {
     }
   }
 
+  componentDidMount() {
+    firebaseUtil.onUserChange(user => this.setState({ isUserSignedIn: !!user }));
+  }
+
   render() {
+
     return (
       <div className="landing-page">
         <div className="header">
@@ -36,8 +44,10 @@ export default class Landing extends React.Component {
             <div className="scroll-link">What it is</div>
             <div className="scroll-link">Who it's for</div>
             <div className="scroll-link">How it works</div>
-            <Link to="/login" className="login-link">
-              <Button variant="contained" className="button">Login/Sign Up</Button>
+            <Link to={this.state.isUserSignedIn ? '/home' : '/login'} className="login-link">
+              <Button variant="contained" className="button">
+                {this.state.isUserSignedIn ? "Go to Portal" : "Login/Sign Up" }
+              </Button>
             </Link>
             
           </div>
@@ -48,11 +58,10 @@ export default class Landing extends React.Component {
               <div className="description">Brought to you by Bottom Text</div>
             </div>
             <div className="right">
-              {/* <div className="placeholder">Some Graphic Placeholder</div> */}
               <div className="info-cards">
                 {
                   this.state.info.map(data => (
-                    <Paper className="card" elevation="4">
+                    <Paper className="card" elevation="4" key={data.title}>
                       <div className="card-title">{data.title}</div>
                       <div className="card-content">{data.content}</div>
                     </Paper>

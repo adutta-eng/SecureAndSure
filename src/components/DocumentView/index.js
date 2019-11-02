@@ -29,7 +29,7 @@ export default class DocumentView extends React.Component {
                     {this.props.documents.map(document => (
                         <Card className="document">
                             <CardMedia className="document-photo">
-                                <img src={document.img}></img>
+                                <img src={document.image}></img>
                             </CardMedia>
                             <CardContent>
                                 <Typography gutterBottom variant="h5" component="h2">

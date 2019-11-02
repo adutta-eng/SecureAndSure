@@ -12,10 +12,11 @@ import actualFemaleLicense from "assets/actualFemaleLicense.jpg"
 import realPassport2 from "assets/realPassport2.png"
 import legitSocial from "assets/legitSocial.jpg"
 import marriageCertificate from "assets/marriageCertificate.jpg"
+
 const documents = [
   {
     type: "Driver's License",
-    img: actualFemaleLicense,
+    image: actualFemaleLicense,
     parsedInfo: [
       { FIRST_NAME: "JANE Q" },
       { LAST_NAME: "PUBLIC"},
@@ -37,7 +38,7 @@ const documents = [
   },
   {
     type: "Birth Certificate",
-    img: birthCertificateActual,
+    image: birthCertificateActual,
     parsedInfo: [
       { NAME: "JANE Q PUBLIC" },
       { SEX: "FEMALE" },
@@ -46,7 +47,7 @@ const documents = [
   },
   {
     type: "Passport",
-    img: realPassport2,
+    image: realPassport2,
     parsedInfo: [
       { TYPE: "P"},
       { CODE: "USA"},
@@ -63,7 +64,7 @@ const documents = [
   },
   {
     type: "Social Security Card",
-    img: legitSocial,
+    image: legitSocial,
     parsedInfo: [
       { NAME: "AUGUST NAPOLEON ANDERSON" },
       { ACCOUNT_NUMBER: "017-10-1312" },
@@ -72,7 +73,7 @@ const documents = [
   },
   {
     type: "Marriage Certificate",
-    img: marriageCertificate,
+    image: marriageCertificate,
     parsedInfo: [
       { LICENSE_NO: "2398487-0" },
       { GROOM_NAME: "HYMAN\tVICTOR" },

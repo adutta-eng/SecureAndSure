@@ -23,10 +23,6 @@ class Login extends React.Component {
     }
   }
 
-  componentDidMount() {
-    firebaseUtil.logout(); // Temporary for testing purposes
-  }
-
   setLoginField(field, value) {
     this.setState({ login: {...this.state.login, [field]: value }})
   }
@@ -38,8 +34,8 @@ class Login extends React.Component {
 
   login() {
     const { email, password } = this.state.login;
-    firebaseUtil.login(email, password).then(() => {
-      this.props.history.push('/');
+    firebaseUtil.signIn(email, password).then(() => {
+      this.props.history.push('/home');
     }).catch(error => {
       // show error message
     });
@@ -49,7 +45,7 @@ class Login extends React.Component {
     const { email, password, repeatPassword } = this.state.signup
     if (password === repeatPassword) {
       firebaseUtil.signUp(email, password).then(() => {
-      this.props.history.push('/');
+      this.props.history.push('/home');
       }).catch(error => {
         // display error message
       })
