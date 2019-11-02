@@ -1,13 +1,14 @@
 import React from "react";
 import DocumentView from "components/DocumentView"
 import "./style.sass"
-import { TextField } from "@material-ui/core";
+import { TextField, Button } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { withRouter } from 'react-router-dom';
 
-import * as firebase from "util/firebase";
+import * as firebaseUtil from "util/firebase";
 
-export default class Home extends React.Component {
+class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,9 +18,9 @@ export default class Home extends React.Component {
   }
 
   componentDidMount() {
-    firebase.onUserChange(user => {
+    firebaseUtil.onUserChange(user => {
       if (user) {
-        firebase.onAddDocument(documents => {
+        firebaseUtil.onAddDocument(documents => {
           this.setState({documents: Object.values(documents)});
         });
       }
@@ -29,6 +30,12 @@ export default class Home extends React.Component {
   filteredDocuments() {
     const stringContains = (str, substr) => str.toLowerCase().includes(substr.toLowerCase());
     return this.state.documents.filter(document => stringContains(JSON.stringify(document), this.state.searchText));
+  }
+
+  signOut() {
+    firebaseUtil.signOut().then(() => {
+      this.props.history.push('/');
+    })
   }
 
   render() {
@@ -44,7 +51,11 @@ export default class Home extends React.Component {
       />
 
       <DocumentView documents={this.filteredDocuments()}/>
+
+      <Button className="logout-button" onClick={() => this.signOut()}>Sign Out</Button>
     </div>
     );
   }
 }
+
+export default withRouter(Home)

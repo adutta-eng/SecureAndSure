@@ -32,16 +32,17 @@ class Login extends React.Component {
     this.setState({ signup: {...this.state.signup, [field]: value }})
   }
 
-  login() {
+  login(e) {
     const { email, password } = this.state.login;
     firebaseUtil.signIn(email, password).then(() => {
       this.props.history.push('/home');
     }).catch(error => {
       // show error message
     });
+    e.preventDefault();
   }
 
-  signUp() {
+  signUp(e) {
     const { email, password, repeatPassword } = this.state.signup
     if (password === repeatPassword) {
       firebaseUtil.signUp(email, password).then(() => {
@@ -52,6 +53,7 @@ class Login extends React.Component {
     } else {
       // tell user that passwords don't match
     }
+    e.preventDefault();
   }
 
   render() {
@@ -63,7 +65,7 @@ class Login extends React.Component {
         </div>
 
         <div className="container">
-          <div className="login-form">
+          <form className="login-form" onSubmit={e => this.login(e)}>
             <div className="title">Login</div>
             <TextField
               className="input"
@@ -85,14 +87,14 @@ class Login extends React.Component {
               className="button"
               color="primary"
               variant="contained"
-              onClick={() => this.login()}>
+              type="submit">
                 Login
             </Button>
-          </div>
+          </form>
 
           <div className="separator"/>
 
-          <div className="signup-form">
+          <form className="signup-form" onSubmit={e => this.signUp(e)}>
             <div className="title">Sign Up</div>
             <TextField
               className="input"
@@ -123,10 +125,10 @@ class Login extends React.Component {
               className="button"
               color="primary"
               variant="contained"
-              onClick={() => this.signUp()}>
+              type="submit">
                 Sign Up
             </Button>
-          </div>
+          </form>
         </div>
       </div>
     );
