@@ -1,3 +1,7 @@
+import * as firebase from "firebase/app"
+import "firebase/auth"
+import "firebase/database"
+
 var firebaseConfig = {
     apiKey: "AIzaSyBe8TjNtReBS-WVrHQ2XRW_-eGbFDedwto",
     authDomain: "andsure-f7038.firebaseapp.com",
@@ -9,45 +13,42 @@ var firebaseConfig = {
     measurementId: "G-XQTRWLE4VB"
   };
 
-  import * as firebase from "firebase/app"
-  import "firebase/auth"
-  import "firebase/database"
-
   firebase.initializeApp(firebaseConfig);
   var secureBase = firebase.database();
 
-  async function signUp(email, password) {
+  
+  export async function signUp(email, password) {
       await firebase.auth().createUserWithEmailAndPassword(email, password)
-      var authEmail = firebase.auth().currentUser().email;
-      var emailKey = secureBase.ref().child('accounts').child('emails').push().key();
-      var emailUpdate = {};
+      var authEmail = firebase.auth().currentUser.email;
+      var uid = firebase.auth().currentUser.uid;
 
-      emailUpdate['/emails/' + emailKey] = authEmail;
+      await secureBase.ref('/Users/' + uid).set({
+        key1: "Test",
+      }); 
 
-      await secureBase.ref().update(emailUpdate);
   }
 
-  async function signIn(email, password) {
+  export async function signIn(email, password) {
     await firebase.auth().signInWithEmailAndPassword(email, password)
-      var uid = firebase.auth().currentUser().uid;
-      var uidKey = secureBase.ref().child('Signed In Users').child('IDs').push().key();
-
-      var uidUpdate = {};
-      uidUpdate['/IDs/' + uidKey] = uid;
-      await secureBase.ref().update(uidUpdate); 
+    var uid = firebase.auth().currentUser.uid;
   }
 
-  async function updateDatabaseWithUpload(b64) {
-    var b64Key = secureBase.ref().child('Signed In Users').child('Encrypted Uploads').push().key()
-        + firebase.auth.currentUser().uid;
+  export async function updateDatabaseWithUpload(b64, parsedInfo) {
+    var uid = firebase.auth().currentUser.uid;
 
-    var b64Update = {};
-    b64Update['/encrypted/' + b64Key] = b64;
-    await secureBase.ref().update(b64Update);
+    var docRef = secureBase.ref('/Users/' + uid + '/Documents/').push();
+    await docRef.set({
+      "image": b64,
+      parsedInfo,
+    })
   }
 
-  async function signOut() {
+  export function onAddDocument(callback) {
+    var uid = firebase.auth().currentUser.uid;
+    secureBase.ref('/Users/' + uid + '/Documents/').on('value', (snapshot ) => callback(snapshot.val()))
+  }
+
+  export async function signOut() {
       let error;
-      await firebase.auth().signOut()
-      await secureBase.ref().child('Signed In Users').child('IDs').child(firebase.auth().currentUser().uid).remove();
+      await firebase.auth().signOut();
   }
