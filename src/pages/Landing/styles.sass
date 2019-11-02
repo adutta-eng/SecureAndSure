@@ -1,0 +1,137 @@
+// .landing-page
+//   // background-color: #3f51b5
+//   height: 100vh
+//   overflow: hidden
+
+//   .background
+//     background-color: #3f51b5
+//     position: absolute
+//     bottom: 0
+//     height: 60%
+//     width: 100%
+
+//   .title
+//     color: #3f51b5
+//     // color: white
+//     text-align: center
+//     font-size: 3.5em
+//     font-weight: bold
+//     margin-top: 65px
+//     // border-bottom: 2px #3f51b5 solid
+//     // text-decoration: underline
+
+
+//   .info-cards
+//     display: flex
+//     justify-content: space-around
+//     // z-index: 1
+//     margin-top: 60px
+//     position: relative
+
+//     .card
+//       padding: 20px
+//       max-width: 25%
+//       border-radius: 10px
+
+//       .card-title
+//         text-align: center
+//         font-weight: bold
+//         font-size: 1.75em
+//         color: #444
+
+//       .card-content
+//         margin-top: 15px
+
+
+.landing-page
+  .header
+    height: 100vh
+    background-color: #3f51b5
+    // width: 100%
+    display: flex
+    flex-direction: column
+
+    .menu
+      position: relative
+      display: flex
+      color: white
+      padding: 40px 60px
+      padding-bottom: 10px
+      align-items: center
+      font-size: 1.1em
+
+      .spacer
+        flex: 1
+
+      .scroll-link
+        // font-weight: bold
+        margin: 0 30px
+        cursor: pointer
+        &:hover
+          text-decoration: underline
+
+      .login-link
+        text-decoration: none
+        .button
+          margin: 0 30px
+          background-color: white
+        
+
+    .container
+      flex: 1
+      display: flex
+
+      .left, .right
+        flex: 1
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
+        color: white
+
+        .title
+          font-size: 3em
+          font-weight: bold
+          margin-bottom: 25px
+          letter-spacing: 1px
+        
+        .description
+          margin: 0 100px
+          font-size: 1.1em
+          // letter-spacing: .2px
+          text-align: center
+
+        .placeholder
+          color: black
+          font-size: 3em
+          width: 400px
+          height: 500px
+          background-color: white
+          border-radius: 20px
+          display: flex
+          align-items: center
+          text-align: center
+
+        .info-cards
+          display: flex
+          margin-top: 60px
+          position: relative
+          flex-wrap: wrap
+          justify-content: center
+
+          .card
+            padding: 30px
+            // max-width: 25%
+            border-radius: 10px
+            margin: 20px
+            width: 250px
+            text-align: center
+
+            .card-title
+              text-align: center
+              font-weight: bold
+              font-size: 1.75em
+              color: #444
+
+            .card-content
+              margin-top: 15px
