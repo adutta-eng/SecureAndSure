@@ -18,3 +18,8 @@ export function BIHKk () {
 }
 */
 
+export function test() {
+
+    return {hi: "wow", stop: {bye: "wtvr"} };
+}
+
