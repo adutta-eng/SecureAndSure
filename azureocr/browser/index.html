@@ -1,202 +1,159 @@
 <html>
 
 <head>
-    <h1>Read image:</h1>
-    Image to read:
-    <input type="file" id="inputImage" />
-    <br>
-    <br>
-    <div id="wrapper" style="width:1020px; display:table;">
-        <div id="jsonOutput" style="width:600px; display:table-cell;">
-            Response:
-            <br>
-            <br>
-            <textarea id="responseTextArea" class="UIInput" style="width:500; height:400px;"></textarea>
-            <img id="myImg" src="#" alt="" width="500">
-        </div>
-        <video id="video" width="640" height="480" autoplay></video>
-        <button id="snap">Snap Photo</button>
-        <canvas id="canvas" width="640" height="480"></canvas>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script>
-            $(function () {
+  <h1>Read image:</h1>
+  Image to read:
+  <input type="file" id="inputImage" />
+  <br>
+  <br>
+  <div id="wrapper" style="width:1020px; display:table;">
+    <div id="jsonOutput" style="width:600px; display:table-cell;">
+      Response:
+      <br>
+      <br>
+      <textarea id="responseTextArea" class="UIInput" style="width:500; height:400px;"></textarea>
+      <img id="myImg" src="#" alt="" width="500">
+    </div>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="snap">Snap Photo</button>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+      $(function() {
 
-                document.querySelector('input[type="file"]').addEventListener('change', function () {
-                    var img = document.querySelector('img');
-                    img.src = URL.createObjectURL(this.files[0]);
+        document.querySelector('input[type="file"]').addEventListener('change', function() {
+          var img = document.querySelector('img');
+          img.src = URL.createObjectURL(this.files[0]);
 
-                    var reader = new FileReader();
-                    reader.onload = function () {
-                        var arrayBuffer = this.result,
-                            array = new Uint8Array(arrayBuffer);
+          var reader = new FileReader();
+          reader.onload = function() {
+            var arrayBuffer = this.result,
+              array = new Uint8Array(arrayBuffer);
+            process(arrayBuffer);
+          }
+          reader.readAsArrayBuffer(this.files[0]);
 
-                        var subscriptionKey = "afe6f1104bd44463a808439640ba056c";
-                        var uriBase = "https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/RecognizeText";
+        }, false);
+        var video = document.getElementById('video');
 
-                        var params = {
-                            "language": "unk",
-                            "detectOrientation ": "true",
-                        };
+        // Get access to the camera!
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({
+            video: true
+          }).then(function(stream) {
+            video.srcObject = stream;
+            video.play();
+          });
+          var canvas = document.getElementById('canvas');
+          var ctx = canvas.getContext('2d');
+          var video = document.getElementById('video');
 
-                        $.ajax({
-                            url: uriBase + "?" + $.param(params),
+          // Trigger photo take
+          document.getElementById("snap").addEventListener("click", function() {
+            ctx.drawImage(video, 0, 0, 640, 480);
 
-                            beforeSend: function (jqXHR) {
-                                jqXHR.setRequestHeader("Content-Type", "application/octet-stream");
-                                jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-                            },
+            let data = canvas.toDataURL('image/jpeg');
 
-                            type: "POST",
-                            processData: false,
-                            data: arrayBuffer
-                        })
+            fetch(data)
+              .then(res => res.blob())
+              .then(blobData => {
+                process(blobData);
 
-                            .done(function (data, textStatus, jqXHR) {
-                                // Show progress.
-                                $("#responseTextArea").val("Processing");
-                                setTimeout(function () {
-                                    // The "Operation-Location" in the response contains the URI to retrieve the recognized text.
-                                    var operationLocation = jqXHR.getResponseHeader("Operation-Location");
+              })
+          })
+        }
+      })
 
-                                    $.ajax({
-                                        url: operationLocation,
-                                        beforeSend: function (jqXHR) {
-                                            jqXHR.setRequestHeader("Content-Type", "application/json");
-                                            jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-                                        },
-                                        type: "GET",
-                                    })
+      function process(data) {
+        var subscriptionKey = "afe6f1104bd44463a808439640ba056c";
+        var uriBase = "https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/RecognizeText";
 
-                                        .done(function (data) {
-                                            var text = "";
-                                            // Show formatted JSON on webpage.
-                                            for (i in data.recognitionResult.lines) {
-                                                text += data.recognitionResult.lines[i].text + "\n";
-                                            }
-                                            $("#responseTextArea").val(text);
-                                        })
+        var params = {
+          "language": "unk",
+          "detectOrientation ": "true",
+        };
 
-                                        .fail(function (jqXHR, textStatus, errorThrown) {
-                                            // Display error message.
-                                            var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-                                            errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-                                                jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
-                                            alert(errorString);
-                                        });
-                                }, 2000);
-                            })
+        $.ajax({
+            url: uriBase + "?" + $.param(params),
 
-                            .fail(function (jqXHR, textStatus, errorThrown) {
-                                // Put the JSON description into the text area.
-                                $("#responseTextArea").val(JSON.stringify(jqXHR, null, 2));
+            beforeSend: function(jqXHR) {
+              jqXHR.setRequestHeader("Content-Type", "application/octet-stream");
+              jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+            },
 
-                                // Display error message.
-                                var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-                                errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-                                    jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
-                                alert(errorString);
-                            })
-                    }
-                    reader.readAsArrayBuffer(this.files[0]);
+            type: "POST",
+            processData: false,
+            data: data
+          })
 
-                }, false);
-                var video = document.getElementById('video');
+          .done(function(data, textStatus, jqXHR) {
+            // Show progress.
+            $("#responseTextArea").val("Processing");
+            setTimeout(function() {
+              // The "Operation-Location" in the response contains the URI to retrieve the recognized text.
+              var operationLocation = jqXHR.getResponseHeader("Operation-Location");
 
-                // Get access to the camera!
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    // Not adding `{ audio: true }` since we only want video now
-                    navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
-                        //video.src = window.URL.createObjectURL(stream);
-                        video.srcObject = stream;
-                        video.play();
-                    });
-                    var canvas = document.getElementById('canvas');
-                    var ctx = canvas.getContext('2d');
-                    var video = document.getElementById('video');
+              $.ajax({
+                  url: operationLocation,
+                  beforeSend: function(jqXHR) {
+                    jqXHR.setRequestHeader("Content-Type", "application/json");
+                    jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+                  },
+                  type: "GET",
+                })
 
-                    // Trigger photo take
-                    document.getElementById("snap").addEventListener("click", function () {
-                        ctx.drawImage(video, 0, 0, 640, 480);
+                .done(function(data) {
+                  var text = "";
+                  // Show formatted JSON on webpage.
+                  for (i in data.recognitionResult.lines) {
+                    text += data.recognitionResult.lines[i].text + "\n";
+                  }
+                  var array = text.split("\n");
+                  $("#responseTextArea").val(text);
+                })
 
-                        let data = canvas.toDataURL('image/jpeg');
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                  // Display error message.
+                  var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+                  errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+                    jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+                  alert(errorString);
+                });
+            }, 2000);
+          })
 
-                        fetch(data)
-                            .then(res => res.blob())
-                            .then(blobData => {
+          .fail(function(jqXHR, textStatus, errorThrown) {
+            // Put the JSON description into the text area.
+            $("#responseTextArea").val(JSON.stringify(jqXHR, null, 2));
 
-                                var subscriptionKey = "afe6f1104bd44463a808439640ba056c";
-                                var uriBase = "https://westcentralus.api.cognitive.microsoft.com/vision/v1.0/RecognizeText";
+            // Display error message.
+            var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+            errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+              jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
+            alert(errorString);
+          })
+      }
 
-                                var params = {
-                                    "language": "unk",
-                                    "detectOrientation ": "true",
-                                };
-                                $.ajax({
-                                    url: uriBase + "?" + $.param(params),
+      function parseIcard(array) {
+        var name = array[3].split(",");
+        var lastName = name[0];
+        var firstName = name[1];
+        var expireLine = array[2].split(" ");
+        var expiration = expireLine[2];
+        var library = array[6];
+        var uin = array[8];
+        var card = array[10];
+        return firstName + " " + lastName;
+      }
 
-                                    beforeSend: function (jqXHR) {
-                                        jqXHR.setRequestHeader("Content-Type", "application/octet-stream");
-                                        jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-                                    },
-
-                                    type: "POST",
-                                    processData: false,
-                                    contentType: "application/octet-stream",
-                                    data: blobData
-                                })
-
-                                    .done(function (data, textStatus, jqXHR) {
-                                        // Show progress.
-                                        $("#responseTextArea").val("Processing");
-                                        setTimeout(function () {
-                                            // The "Operation-Location" in the response contains the URI to retrieve the recognized text.
-                                            var operationLocation = jqXHR.getResponseHeader("Operation-Location");
-
-                                            $.ajax({
-                                                url: operationLocation,
-                                                beforeSend: function (jqXHR) {
-                                                    jqXHR.setRequestHeader("Content-Type", "application/json");
-                                                    jqXHR.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-                                                },
-                                                type: "GET",
-                                            })
-
-                                                .done(function (data) {
-                                                    var text = "";
-                                                    // Show formatted JSON on webpage.
-                                                    for (i in data.recognitionResult.lines) {
-                                                        text += data.recognitionResult.lines[i].text + "\n";
-                                                    }
-                                                    $("#responseTextArea").val(text);
-                                                })
-
-                                                .fail(function (jqXHR, textStatus, errorThrown) {
-                                                    // Display error message.
-                                                    var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-                                                    errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-                                                        jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
-                                                    alert(errorString);
-                                                });
-                                        }, 2000);
-                                    })
-
-                                    .fail(function (jqXHR, textStatus, errorThrown) {
-                                        // Put the JSON description into the text area.
-                                        $("#responseTextArea").val(JSON.stringify(jqXHR, null, 2));
-
-                                        // Display error message.
-                                        var errorString = (errorThrown === "") ? "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-                                        errorString += (jqXHR.responseText === "") ? "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-                                            jQuery.parseJSON(jqXHR.responseText).message : jQuery.parseJSON(jqXHR.responseText).error.message;
-                                        alert(errorString);
-                                    })
-
-                            })
-                    })
-                }
-            })
-
-        </script>
+      function parseId(array) {
+        for (var i = 0; i < array.length; i++) {
+          if (array[i].charAt(0) == '1') {
+            var lastName = array[i].substring(2);
+          }
+        }
+      }
+    </script>
 </head>
 
 </html>
