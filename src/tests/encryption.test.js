@@ -1,7 +1,13 @@
 import * as c from "util/encryption"
 
-test('WOOOOORk', () => {
+test('WOOOORk', () => {
 
 
-    expect(c.test()).toStrictEqual({hi: "wow", stop: {bye: "wtvr"} });
+    expect(c.generateHash("woow")).toStrictEqual({hi: "wow", stop: {bye: "wtvr"} });
+});
+
+test('testing public and private key generation', () => {
+
+
+    expect(c.generateKeys("woiiiow")).toStrictEqual({hi: "wow", stop: {bye: "wtvr"} });
 });
