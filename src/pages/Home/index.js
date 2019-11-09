@@ -21,7 +21,9 @@ class Home extends React.Component {
     firebaseUtil.onUserChange(user => {
       if (user) {
         firebaseUtil.onAddDocument(documents => {
-          this.setState({documents: Object.values(documents)});
+          if (documents) {
+            this.setState({documents: Object.values(documents)});
+          }
         });
       }
     });

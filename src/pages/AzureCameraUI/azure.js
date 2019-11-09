@@ -40,11 +40,10 @@ export function process(data, callback) {
             .done(function(data) {
               var text = "";
               // Show formatted JSON on webpage.
-              for (i in data.recognitionResult.lines) {
+              for (let i in data.recognitionResult.lines) {
                 text += data.recognitionResult.lines[i].text + "\n";
               }
               var array = text.split("\n");
-            //   $("#responseTextArea").val(text);
               callback(text);
             })
 
