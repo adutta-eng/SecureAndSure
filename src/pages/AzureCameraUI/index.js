@@ -21,6 +21,31 @@ class AzureCameraUI extends React.Component {
             });
         }  
     }
+    processPhoto(input) {
+        const ctx = this.canvasRef.current.getContext('2d');
+        var img = new Image();
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, 640, 480);
+        }
+        img.src = URL.createObjectURL(input.files[0]);
+        var reader = new FileReader();
+          reader.onload = function() {
+            var arrayBuffer = input.result,
+            array = new Uint8Array(arrayBuffer);
+            process(arrayBuffer, (text) => {
+                const parsedInfo = [
+                    {UIN: text.match(/(?<!\d)\d{9}(?!\d)/)[0]},
+                    {Library: text.match(/(?<!\d)\d{14}(?!\d)/)[0]},
+                    {Card: text.match(/(?<!\d)\d{16}(?!\d)/)[0]},
+                    {Name: text.match(/^[A-Z, -]+$/gm).filter(text => !text.match(/illinois/i))[0]},
+                    {'Card Expires': text.match(/\d\d\/\d\d\/\d{4}/)[0]}
+                ];
+                addDocument('I-Card', img.src, parsedInfo);
+                this.props.history.push('/home');
+            });
+          }
+
+    }
     snapPhoto() {
         this.canvasRef.current.width = this.video.offsetWidth;
         this.canvasRef.current.height = this.video.offsetHeight;
@@ -31,7 +56,7 @@ class AzureCameraUI extends React.Component {
             const parsedInfo = [
                 {UIN: text.match(/(?<!\d)\d{9}(?!\d)/)[0]},
                 {Library: text.match(/(?<!\d)\d{14}(?!\d)/)[0]},
-                {Card: text.match(/(?<!\d)\d{9}(?!\d)/)[0]},
+                {Card: text.match(/(?<!\d)\d{16}(?!\d)/)[0]},
                 {Name: text.match(/^[A-Z, -]+$/gm).filter(text => !text.match(/illinois/i))[0]},
                 {'Card Expires': text.match(/\d\d\/\d\d\/\d{4}/)[0]}
             ];
@@ -49,7 +74,8 @@ class AzureCameraUI extends React.Component {
                 </Paper>
                 <div className="buttons">
                     <Card className="upload_existing">
-                        <Button variant="contained" size="large" color="primary">
+                        <Button component="label" label="CHOOSE FILE" variant="contained" size="large" color="primary">
+                            <input type="file" className="hidden" onChange={(event) => this.processPhoto(event.target)}/>
                             CHOOSE FILE
                         </Button>
                     </Card>
