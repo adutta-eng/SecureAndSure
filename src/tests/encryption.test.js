@@ -1,13 +1,19 @@
 import * as c from "util/encryption"
 
-test('WOOOORk', () => {
+// test('testing hash generation', () => {
 
 
-    expect(c.generateHash("woow")).toStrictEqual({hi: "wow", stop: {bye: "wtvr"} });
-});
+//     expect(c.generateHash("woow")).toStrictEqual("");
+// });
 
-test('testing public and private key generation', () => {
+// test('testing public and private key generation', () => {
 
 
-    expect(c.generateKeys("woiiiow")).toStrictEqual({hi: "wow", stop: {bye: "wtvr"} });
+//     expect(c.generateKeys("woiiiow")).toStrictEqual("");
+// });
+
+test('encoding of simple message', () => {
+    let x  = c.generateKeys("woiiiow");
+    let y = c.encryptInfo({publicKey: x.publicKey, type: "woooowID", image: "woooooooooooooooooooooooooooooooow", parsedInfo: {wow: "wow", woow: "wwwww"}})
+    expect(c.decryptInfo(x.HashOfPassword, x.encrypPrivateKey, y)).toStrictEqual({image: "", type: "", parsedInfo: ""});
 });
