@@ -14,6 +14,7 @@ import * as c from "util/encryption"
 
 test('encoding of simple message', () => {
     let x  = c.generateKeys("woiiiow");
+    let z = c.generateHash("woiiiow");
     let y = c.encryptInfo({publicKey: x.publicKey, type: "woooowID", image: "woooooooooooooooooooooooooooooooow", parsedInfo: {wow: "wow", woow: "wwwww"}})
-    expect(c.decryptInfo(x.HashOfPassword, x.encrypPrivateKey, y)).toStrictEqual({image: "", type: "", parsedInfo: ""});
+    expect(c.decryptInfo(z, x.encrypPrivateKey, y)).toStrictEqual({image: "", type: "", parsedInfo: ""});
 });

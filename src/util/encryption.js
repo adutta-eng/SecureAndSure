@@ -23,7 +23,7 @@ export function generateKeys(password) {
     let PrivateKey = forge.pki.privateKeyToPem(keypair.privateKey)
     let encrypPrivateKey =  xorEncryption(HashOfPassword, PrivateKey)
 
-    return { publicKey: forge.pki.publicKeyToPem(keypair.publicKey), encrypPrivateKey: encrypPrivateKey , HashOfPassword: HashOfPassword } 
+    return { publicKey: forge.pki.publicKeyToPem(keypair.publicKey), encrypPrivateKey: encrypPrivateKey} 
 }
 
 //encrypt with public key (publicKey, string "type", string "image", struct "parsedInfo" ) 
