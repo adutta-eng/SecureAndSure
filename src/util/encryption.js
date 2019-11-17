@@ -23,7 +23,10 @@ export function generateKeys(password) {
     let PrivateKey = forge.pki.privateKeyToPem(keypair.privateKey)
     let encrypPrivateKey =  xorEncryption(HashOfPassword, PrivateKey)
 
-    return { publicKey: forge.pki.publicKeyToPem(keypair.publicKey), encrypPrivateKey: encrypPrivateKey} 
+    return {
+        publicKey: forge.pki.publicKeyToPem(keypair.publicKey), 
+        encryptedPrivateKey: encrypPrivateKey
+    } 
 }
 
 //encrypt with public key (publicKey, string "type", string "image", struct "parsedInfo" ) 
@@ -34,7 +37,11 @@ export function encryptInfo(information) {
     let parsedInfo = JSON.stringify(information.parsedInfo)    
     let key = forge.pki.publicKeyFromPem(information.publicKey)
 
-    return { type: key.encrypt(information.type), image: key.encrypt(information.image), parsedInfo: key.encrypt(parsedInfo) }
+    return {
+        type: key.encrypt(information.type),
+        image: key.encrypt(information.image),
+        parsedInfo: key.encrypt(parsedInfo)
+    }
 }
 
 //function to hashThePassword
@@ -49,5 +56,9 @@ export function decryptInfo(HashOfPassword, encrypPrivateKey, information) {
     let privateKey = forge.pki.privateKeyFromPem(xorEncryption(HashOfPassword, encrypPrivateKey))
     let textOfParsedInfo = JSON.parse(privateKey.decrypt(information.parsedInfo))
 
-    return { type: privateKey.decrypt(information.type), image: privateKey.decrypt(information.image), parsedInfo: textOfParsedInfo}
+    return {
+        type: privateKey.decrypt(information.type), 
+        image: privateKey.decrypt(information.image), 
+        parsedInfo: textOfParsedInfo
+    }
 }

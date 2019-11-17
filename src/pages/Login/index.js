@@ -3,7 +3,7 @@ import { TextField, Button } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import { withRouter } from 'react-router-dom';
-
+import { generateKeys } from 'util/encryption'
 import * as firebaseUtil from "util/firebase";
 import './styles.sass';
 
@@ -45,13 +45,16 @@ class Login extends React.Component {
   signUp(e) {
     const { email, password, repeatPassword } = this.state.signup
     if (password === repeatPassword) {
-      firebaseUtil.signUp(email, password).then(() => {
-      this.props.history.push('/home');
+      const keys = generateKeys(password)
+      firebaseUtil.signUp(email, password, keys).then(() => {
+        this.props.history.push('/home');
       }).catch(error => {
+        console.log(error)
         // display error message
       })
     } else {
       // tell user that passwords don't match
+      alert("Passwords don't match")
     }
     e.preventDefault();
   }

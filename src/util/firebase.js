@@ -16,13 +16,11 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var secureBase = firebase.database();
 
-export async function signUp(email, password) {
+export async function signUp(email, password, keys) {
     await firebase.auth().createUserWithEmailAndPassword(email, password);
     var uid = firebase.auth().currentUser.uid;
-
-    await secureBase.ref('/Users/' + uid).set({
-      key1: "Test",
-    }); 
+  
+    await secureBase.ref('/Users/' + uid).set(keys); 
 }
 
 export async function signIn(email, password) {
