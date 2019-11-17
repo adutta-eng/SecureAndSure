@@ -73,7 +73,6 @@ class AzureCameraUI extends React.Component {
                     image: imageData,
                     publicKey,
                 })
-                console.log(encryptedInfo)
                 addDocument(encryptedInfo);
                 this.props.history.push('/home');
             })

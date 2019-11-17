@@ -23,7 +23,7 @@ class Home extends React.Component {
         firebaseUtil.getEncryptedPrivateKey().then(encryptedPrivateKey => {
           firebaseUtil.onAddDocument(documentsObj => {
             if (documentsObj) {
-              const encryptedDocuments = Object.values(documents)
+              const encryptedDocuments = Object.values(documentsObj)
               const documents = encryptedDocuments.map(document => decryptInfo(localStorage.hash, encryptedPrivateKey, document))
               this.setState({documents});
             }
