@@ -3,7 +3,8 @@ import "./style.sass"
 import { Paper, IconButton, Fab, CardMedia, Card, CardContent, Typography, Button, ListItem, List, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 import { process } from "./azure.js"
-import { addDocument } from 'util/firebase';
+import { addDocument, getPublicKey } from 'util/firebase';
+import { encryptInfo } from 'util/encryption'
 
 class AzureCameraUI extends React.Component {
     constructor(props) {
@@ -44,8 +45,7 @@ class AzureCameraUI extends React.Component {
                     {Name: text.match(/^[A-Z, -]+$/gm).filter(text => !text.match(/illinois/i))[0]},
                     {'Card Expires': text.match(/\d\d\/\d\d\/\d{4}/)[0]}
                 ];
-                addDocument('I-Card', img.src, parsedInfo);
-                this.props.history.push('/home');
+                
             });
           }
 
@@ -65,9 +65,18 @@ class AzureCameraUI extends React.Component {
                 {Name: text.match(/^[A-Z, -]+$/gm).filter(text => !text.match(/illinois/i))[0]},
                 {'Card Expires': text.match(/\d\d\/\d\d\/\d{4}/)[0]}
             ];
-            
-            addDocument('I-Card', imageData, parsedInfo);
-            this.props.history.push('/home');
+
+            getPublicKey().then(publicKey => {
+                const encryptedInfo = encryptInfo({
+                    type: 'I-Card',
+                    parsedInfo,
+                    image: imageData,
+                    publicKey,
+                })
+                console.log(encryptedInfo)
+                addDocument(encryptedInfo);
+                this.props.history.push('/home');
+            })
         })})
     }
     render() {

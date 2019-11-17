@@ -27,7 +27,7 @@ export async function signIn(email, password) {
   await firebase.auth().signInWithEmailAndPassword(email, password);
 }
 
-export async function addDocument(type, image, parsedInfo) {
+export async function addDocument({type, image, parsedInfo}) {
   var uid = firebase.auth().currentUser.uid;
 
   var docRef = secureBase.ref('/Users/' + uid + '/Documents/').push();
@@ -49,4 +49,14 @@ export async function signOut() {
 
 export function onUserChange(callback) {
   firebase.auth().onAuthStateChanged(user => callback(user));
+}
+
+export async function getPublicKey() {
+  const uid = firebase.auth().currentUser.uid;
+  return firebase.database().ref(`/Users/${uid}/publicKey`).once('value').then(snapshot => snapshot.val())
+}
+
+export async function getEncryptedPrivateKey() {
+  const uid = firebase.auth().currentUser.uid;
+  return firebase.database().ref(`/Users/${uid}/encryptedPrivateKey`).once('value').then(snapshot => snapshot.val())
 }

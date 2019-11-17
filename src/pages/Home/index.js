@@ -5,7 +5,7 @@ import { TextField, Button } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { withRouter } from 'react-router-dom';
-
+import { decryptInfo } from 'util/encryption'
 import * as firebaseUtil from "util/firebase";
 
 class Home extends React.Component {
@@ -20,11 +20,15 @@ class Home extends React.Component {
   componentDidMount() {
     firebaseUtil.onUserChange(user => {
       if (user) {
-        firebaseUtil.onAddDocument(documents => {
-          if (documents) {
-            this.setState({documents: Object.values(documents)});
-          }
-        });
+        firebaseUtil.getEncryptedPrivateKey().then(encryptedPrivateKey => {
+          firebaseUtil.onAddDocument(documentsObj => {
+            if (documentsObj) {
+              const encryptedDocuments = Object.values(documents)
+              const documents = encryptedDocuments.map(document => decryptInfo(localStorage.hash, encryptedPrivateKey, document))
+              this.setState({documents});
+            }
+          });
+        })
       }
     });
   }
