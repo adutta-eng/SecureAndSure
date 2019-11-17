@@ -19,7 +19,7 @@ export function xorEncryption(key, message) {
 export function generateKeys(password) {
     let HashOfPassword = generateHash(password)
     let rsa = forge.pki.rsa
-    let keypair = rsa.generateKeyPair(2048);
+    let keypair = rsa.generateKeyPair(1024);
     let PrivateKey = forge.pki.privateKeyToPem(keypair.privateKey)
     let encrypPrivateKey =  xorEncryption(HashOfPassword, PrivateKey)
 
@@ -36,10 +36,24 @@ export function generateKeys(password) {
 export function encryptInfo(information) {
     let parsedInfo = JSON.stringify(information.parsedInfo)    
     let key = forge.pki.publicKeyFromPem(information.publicKey)
+    const chunkSize = 106
+    let pointer = 0
+    let notFinished = true
+    let encryptedInfo = ""
+
+    while (notFinished) {
+        let chunk = information.image.substring(pointer, pointer + chunkSize) 
+        if (chunk.length % chunkSize != 0) {
+            notFinished = false
+            chunk += (chunkSize - chunk.length) * " "
+        }
+        encryptedInfo += key.encrypt(chunk)
+        pointer += chunkSize
+    }
 
     return {
         type: key.encrypt(information.type),
-        image: key.encrypt(information.image),
+        image: encryptedInfo,
         parsedInfo: key.encrypt(parsedInfo)
     }
 }
@@ -55,10 +69,19 @@ export function generateHash(password) {
 export function decryptInfo(HashOfPassword, encrypPrivateKey, information) {
     let privateKey = forge.pki.privateKeyFromPem(xorEncryption(HashOfPassword, encrypPrivateKey))
     let textOfParsedInfo = JSON.parse(privateKey.decrypt(information.parsedInfo))
+    const chunkSize = 128
+    let pointer = 0
+    let decryptedInfo = ""
+
+    while (pointer < information.image.length) {
+        let chunk = information.image.substring(pointer, pointer + chunkSize)
+        decryptedInfo += privateKey.decrypt(chunk)
+        pointer += chunkSize
+    }
 
     return {
         type: privateKey.decrypt(information.type), 
-        image: privateKey.decrypt(information.image), 
+        image: decryptedInfo.slice(0, -1), 
         parsedInfo: textOfParsedInfo
     }
 }
