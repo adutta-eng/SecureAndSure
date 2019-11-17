@@ -13,6 +13,7 @@ class AzureCameraUI extends React.Component {
         }
         this.canvasRef = React.createRef();
     }
+
     startCamera() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
@@ -21,14 +22,17 @@ class AzureCameraUI extends React.Component {
             });
         }  
     }
+
     processPhoto(input) {
         const ctx = this.canvasRef.current.getContext('2d');
         var img = new Image();
         img.onload = () => {
             ctx.drawImage(img, 0, 0, 640, 480);
         }
+
         img.src = URL.createObjectURL(input.files[0]);
         var reader = new FileReader();
+
           reader.onload = function() {
             var arrayBuffer = input.result,
             array = new Uint8Array(arrayBuffer);
@@ -52,6 +56,7 @@ class AzureCameraUI extends React.Component {
         const ctx = this.canvasRef.current.getContext('2d');
         ctx.drawImage(this.video, 0, 0, 640, 480);
         let imageData = this.canvasRef.current.toDataURL('image/jpeg');
+
         fetch(imageData).then(res => res.blob()).then(blobData => {process(blobData, (text) => {
             const parsedInfo = [
                 {UIN: text.match(/(?<!\d)\d{9}(?!\d)/)[0]},
@@ -60,6 +65,7 @@ class AzureCameraUI extends React.Component {
                 {Name: text.match(/^[A-Z, -]+$/gm).filter(text => !text.match(/illinois/i))[0]},
                 {'Card Expires': text.match(/\d\d\/\d\d\/\d{4}/)[0]}
             ];
+            
             addDocument('I-Card', imageData, parsedInfo);
             this.props.history.push('/home');
         })})

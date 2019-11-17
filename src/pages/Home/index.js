@@ -37,6 +37,7 @@ class Home extends React.Component {
   signOut() {
     firebaseUtil.signOut().then(() => {
       this.props.history.push('/');
+      localStorage.removeItem("hash")
     })
   }
 

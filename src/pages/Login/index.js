@@ -3,7 +3,7 @@ import { TextField, Button } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import { withRouter } from 'react-router-dom';
-import { generateKeys } from 'util/encryption'
+import { generateKeys, generateHash } from 'util/encryption'
 import * as firebaseUtil from "util/firebase";
 import './styles.sass';
 
@@ -36,6 +36,7 @@ class Login extends React.Component {
     const { email, password } = this.state.login;
     firebaseUtil.signIn(email, password).then(() => {
       this.props.history.push('/home');
+      localStorage.hash = generateHash(password)
     }).catch(error => {
       // show error message
     });
@@ -48,6 +49,7 @@ class Login extends React.Component {
       const keys = generateKeys(password)
       firebaseUtil.signUp(email, password, keys).then(() => {
         this.props.history.push('/home');
+        localStorage.hash = generateHash(password)
       }).catch(error => {
         console.log(error)
         // display error message
