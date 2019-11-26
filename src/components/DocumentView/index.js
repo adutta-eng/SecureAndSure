@@ -48,7 +48,7 @@ export default class DocumentView extends React.Component {
                     <Card className="add-doc">
                         <Paper color= "text.primary" className="box">
                             <a href="/add">
-                                <Fab color= "#3f51b5" aria-label="add">
+                                <Fab className="add-button" aria-label="add">
                                     <FontAwesomeIcon icon = {faPlus}/>
                                 </Fab>
                             </a>

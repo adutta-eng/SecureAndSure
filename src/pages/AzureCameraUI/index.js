@@ -24,40 +24,41 @@ class AzureCameraUI extends React.Component {
         }  
     }
 
-    processPhoto(input) {
-        const ctx = this.canvasRef.current.getContext('2d');
-        var img = new Image();
+    uploadPhoto(input) {
+        const canvas = this.canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
         img.onload = () => {
-            ctx.drawImage(img, 0, 0, 640, 480);
+            const width = Math.min(img.width, .7 * window.innerWidth);
+            const height = width * (img.height / img.width);
+            canvas.width = window.innerWidth;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+            const imageData = this.canvasRef.current.toDataURL('image/jpeg');
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                const arrayBuffer = reader.result;
+                this.processImage(arrayBuffer, imageData);
+            }
+            reader.readAsArrayBuffer(input.files[0]);
         }
-
         img.src = URL.createObjectURL(input.files[0]);
-        var reader = new FileReader();
-
-          reader.onload = function() {
-            var arrayBuffer = input.result,
-            array = new Uint8Array(arrayBuffer);
-            process(arrayBuffer, (text) => {
-                const parsedInfo = [
-                    {UIN: text.match(/(?<!\d)\d{9}(?!\d)/)[0]},
-                    {Library: text.match(/(?<!\d)\d{14}(?!\d)/)[0]},
-                    {Card: text.match(/(?<!\d)\d{16}(?!\d)/)[0]},
-                    {Name: text.match(/^[A-Z, -]+$/gm).filter(text => !text.match(/illinois/i))[0]},
-                    {'Card Expires': text.match(/\d\d\/\d\d\/\d{4}/)[0]}
-                ];
-                
-            });
-          }
-
     }
     snapPhoto() {
-        this.canvasRef.current.width = this.video.offsetWidth;
-        this.canvasRef.current.height = this.video.offsetHeight;
+        this.canvasRef.current.width = window.innerWidth;
+        this.canvasRef.current.height = this.video.videoHeight;
         const ctx = this.canvasRef.current.getContext('2d');
-        ctx.drawImage(this.video, 0, 0, 640, 480);
+        ctx.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight);
         let imageData = this.canvasRef.current.toDataURL('image/jpeg');
 
-        fetch(imageData).then(res => res.blob()).then(blobData => {process(blobData, (text) => {
+        this.video.srcObject.getTracks().forEach(track => track.stop()); // stop using camera
+
+        fetch(imageData).then(res => res.blob()).then(blobData => this.processImage(blobData));
+    }
+
+    processImage(fileData, imageData) {
+        process(fileData, text => {
             const parsedInfo = [
                 {UIN: text.match(/(?<!\d)\d{9}(?!\d)/)[0]},
                 {Library: text.match(/(?<!\d)\d{14}(?!\d)/)[0]},
@@ -76,8 +77,9 @@ class AzureCameraUI extends React.Component {
                 addDocument(encryptedInfo);
                 this.props.history.push('/home');
             })
-        })})
+        })
     }
+
     render() {
         return(
             <div className="cameraUI">
@@ -89,7 +91,7 @@ class AzureCameraUI extends React.Component {
                 <div className="buttons">
                     <Card className="upload_existing">
                         <Button component="label" label="CHOOSE FILE" variant="contained" size="large" color="primary">
-                            <input type="file" className="hidden" onChange={(event) => this.processPhoto(event.target)}/>
+                            <input type="file" className="hidden" onChange={(event) => this.uploadPhoto(event.target)}/>
                             CHOOSE FILE
                         </Button>
                     </Card>
