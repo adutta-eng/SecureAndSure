@@ -31,7 +31,7 @@ class AzureCameraUI extends React.Component {
         img.onload = () => {
             const width = Math.min(img.width, .7 * window.innerWidth);
             const height = width * (img.height / img.width);
-            canvas.width = window.innerWidth;
+            canvas.width = width;
             canvas.height = height;
             ctx.drawImage(img, 0, 0, width, height);
             const imageData = this.canvasRef.current.toDataURL('image/jpeg');
@@ -45,8 +45,9 @@ class AzureCameraUI extends React.Component {
         }
         img.src = URL.createObjectURL(input.files[0]);
     }
+
     snapPhoto() {
-        this.canvasRef.current.width = window.innerWidth;
+        this.canvasRef.current.width = this.video.videoWidth;
         this.canvasRef.current.height = this.video.videoHeight;
         const ctx = this.canvasRef.current.getContext('2d');
         ctx.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight);
@@ -54,7 +55,7 @@ class AzureCameraUI extends React.Component {
 
         this.video.srcObject.getTracks().forEach(track => track.stop()); // stop using camera
 
-        fetch(imageData).then(res => res.blob()).then(blobData => this.processImage(blobData));
+        fetch(imageData).then(res => res.blob()).then(blobData => this.processImage(blobData, imageData));
     }
 
     processImage(fileData, imageData) {
