@@ -1,14 +1,15 @@
 .login-page
   display: flex
-  justify-content: center
+  justify-content: space-evenly
   align-items: center
   height: 100vh
   width: 100vw
   background-color: lighten(#3f51b5, 50%)
+  flex-direction: column
 
   .header
-    position: absolute
-    top: 50px
+    &.fake
+      visibility: hidden
     .icon
       font-size: 4em
       color: #3f51b5

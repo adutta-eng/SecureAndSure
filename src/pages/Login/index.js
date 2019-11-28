@@ -61,13 +61,21 @@ class Login extends React.Component {
     e.preventDefault();
   }
 
+  header(fake = false) {
+    // fake headers have {visibility: hidden} and are used for spacing
+    const className = 'header ' + (fake ? 'fake' : '');
+    return (
+      <div className={className}>
+        {/* This icon is temporary (until we have an actual icon) */}
+        <FontAwesomeIcon className="icon" icon={faShieldAlt}/>
+      </div>
+    )
+  }
+
   render() {
     return (
       <div className="login-page">
-        <div className="header">
-          {/* This icon is temporary (until we have an actual icon) */}
-          <FontAwesomeIcon className="icon" icon={faShieldAlt}/>
-        </div>
+        {this.header()}
 
         <div className="container">
           <form className="login-form" onSubmit={e => this.login(e)}>
@@ -135,6 +143,8 @@ class Login extends React.Component {
             </Button>
           </form>
         </div>
+
+        {this.header(true)}
       </div>
     );
   }
