@@ -1,16 +1,18 @@
 import React from "react";
 import "./style.sass"
-import { Paper, IconButton, Fab, CardMedia, Card, CardContent, Typography, Button, ListItem, List, ListItemText, ListItemAvatar, Avatar } from '@material-ui/core';
+import { Paper, IconButton, Fab, CardMedia, Card, CardContent, Typography, Button, ListItem, List, ListItemText, ListItemAvatar, Avatar, Select, MenuItem } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 import { process } from "./azure.js"
 import { addDocument, getPublicKey } from 'util/firebase';
 import { encryptInfo } from 'util/encryption'
 
+const documentTypes = ['I-Card', "Driver's License"];
+
 class AzureCameraUI extends React.Component {
     constructor(props) {
         super(props)
-        this.state={
-            stream: null
+        this.state = {
+            documentType: documentTypes[0],
         }
         this.canvasRef = React.createRef();
     }
@@ -84,11 +86,24 @@ class AzureCameraUI extends React.Component {
     render() {
         return(
             <div className="cameraUI">
-                <Paper className="heading">
+                {/* <Paper className="heading"> */}
+                <div className="heading">
                     <Typography className="top" variant="h2" component="header">
-                        Add an Image
+                        Add {'aeiou'.includes(this.state.documentType[0].toLowerCase()) ? 'an' : 'a'} &nbsp;
+                        <Select
+                            className="document-select"
+                            value={this.state.documentType}
+                            onChange={e => this.setState({documentType: e.target.value})}>
+                            {
+                                documentTypes.map(type => (
+                                    <MenuItem value={type} key={type}>{type}</MenuItem>
+                                ))
+                            }
+                            
+                        </Select>
                     </Typography>
-                </Paper>
+                </div>
+                {/* </Paper> */}
                 <div className="buttons">
                     <Card className="upload_existing">
                         <Button component="label" label="CHOOSE FILE" variant="contained" size="large" color="primary">

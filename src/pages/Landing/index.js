@@ -81,7 +81,7 @@ export default class Landing extends React.Component {
           </div>
 
           <div className="details-button" onClick={() => window.scroll({left: 0, top: window.innerHeight, behavior: 'smooth'})}>
-            <div className="text">Details</div>
+            <div className="text">more info</div>
             <FontAwesomeIcon icon={faChevronDown}/>
           </div>
         </div>
