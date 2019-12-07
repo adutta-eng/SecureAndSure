@@ -12,6 +12,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      keys: [],
       documents: [],
       searchText: '',
     }
@@ -21,17 +22,20 @@ class Home extends React.Component {
     firebaseUtil.onUserChange(user => {
       if (user) {
         firebaseUtil.getEncryptedPrivateKey().then(encryptedPrivateKey => {
-          firebaseUtil.onAddDocument(documentsObj => {
+          firebaseUtil.onAddDocument((documentsObj, keys) => {
             if (documentsObj) {
               const encryptedDocuments = Object.values(documentsObj)
               const documents = encryptedDocuments.map(document => decryptInfo(localStorage.hash, encryptedPrivateKey, document))
-              this.setState({documents});
+              this.setState({documents, keys});
+            } else {
+              this.setState({documents:[], keys:[]})
             }
           });
         })
       }
     });
   }
+
 
   filteredDocuments() {
     const stringContains = (str, substr) => str.toLowerCase().includes(substr.toLowerCase());
@@ -57,7 +61,7 @@ class Home extends React.Component {
         onChange={e => this.setState({searchText: e.target.value})}
       />
 
-      <DocumentView documents={this.filteredDocuments()}/>
+      <DocumentView documents={this.filteredDocuments()} keys={this.state.keys}/>
 
       <Button className="logout-button" onClick={() => this.signOut()}>Sign Out</Button>
     </div>
