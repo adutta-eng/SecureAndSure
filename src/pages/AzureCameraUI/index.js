@@ -4,7 +4,8 @@ import { Paper, IconButton, Fab, CardMedia, Card, CardContent, Typography, Butto
 import { withRouter } from 'react-router-dom';
 import { process } from "./azure.js"
 import { addDocument, getPublicKey } from 'util/firebase';
-import { encryptInfo } from 'util/encryption'
+import { encryptInfo } from 'util/encryption';
+import { parseDocument } from './parser';
 
 const documentTypes = ['I-Card', "Driver's License"];
 
@@ -62,17 +63,12 @@ class AzureCameraUI extends React.Component {
 
     processImage(fileData, imageData) {
         process(fileData, text => {
-            const parsedInfo = [
-                {UIN: text.match(/(?<!\d)\d{9}(?!\d)/)[0]},
-                {Library: text.match(/(?<!\d)\d{14}(?!\d)/)[0]},
-                {Card: text.match(/(?<!\d)\d{16}(?!\d)/)[0]},
-                {Name: text.match(/^[A-Z, -]+$/gm).filter(text => !text.match(/illinois/i))[0]},
-                {'Card Expires': text.match(/\d\d\/\d\d\/\d{4}/)[0]}
-            ];
+            const parsedInfo = parseDocument(text, this.state.documentType);
+            console.log(parsedInfo);
 
             getPublicKey().then(publicKey => {
                 const encryptedInfo = encryptInfo({
-                    type: 'I-Card',
+                    type: this.state.documentType,
                     parsedInfo,
                     image: imageData,
                     publicKey,
@@ -89,7 +85,7 @@ class AzureCameraUI extends React.Component {
                 {/* <Paper className="heading"> */}
                 <div className="heading">
                     <Typography className="top" variant="h2" component="header">
-                        Add {'aeiou'.includes(this.state.documentType[0].toLowerCase()) ? 'an' : 'a'} &nbsp;
+                        Add {'aeiou'.includes(this.state.documentType[0].toLowerCase()) ? 'an' : 'a'}&nbsp;
                         <Select
                             className="document-select"
                             value={this.state.documentType}
