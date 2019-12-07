@@ -40,7 +40,16 @@ export async function addDocument({type, image, parsedInfo}) {
 
 export function onAddDocument(callback) {
   var uid = firebase.auth().currentUser.uid;
-  secureBase.ref('/Users/' + uid + '/Documents/').on('value', (snapshot) => callback(snapshot.val()))
+  secureBase.ref('/Users/' + uid + '/Documents/').on('value', (snapshot) => {
+    const keys = [];
+    snapshot.forEach((childShapShot) => keys.push(childShapShot.key))
+    callback(snapshot.val(), keys)
+  })
+}
+
+export function deleteDocument(key) {
+  var uid = firebase.auth().currentUser.uid;
+  secureBase.ref('/Users/' + uid + '/Documents/').child(key).remove();
 }
 
 export async function signOut() {

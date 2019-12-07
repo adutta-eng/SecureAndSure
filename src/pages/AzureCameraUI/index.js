@@ -2,9 +2,11 @@ import React from "react";
 import "./style.sass"
 import { Paper, IconButton, Fab, CardMedia, Card, CardContent, Typography, Button, ListItem, List, ListItemText, ListItemAvatar, Avatar, Select, MenuItem } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { process } from "./azure.js"
 import { addDocument, getPublicKey } from 'util/firebase';
 import { encryptInfo } from 'util/encryption'
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
 const documentTypes = ['I-Card', "Driver's License"];
 
@@ -111,7 +113,7 @@ class AzureCameraUI extends React.Component {
                             CHOOSE FILE
                         </Button>
                     </Card>
-                    <Card className="snap_new">
+                    <Card className="snap_new" onClick={() => this.video.scrollIntoView({behavior: "smooth"})}>
                         <Button className="camera_button" variant="contained" size="large" color="primary" onClick = {()=>this.startCamera()}>
                             USE CAMERA
                         </Button>
@@ -123,7 +125,7 @@ class AzureCameraUI extends React.Component {
                 {/* <video className="camera" ref={video => console.log(video)}>
 
                 </video> */}
-                <Button className="take_photo" variant="contained" size="large" color="primary" onClick = {() => this.snapPhoto()}>
+                <Button className="take_photo" variant="contained" size="large" color="primary" onClick = {() => {this.snapPhoto(); this.canvasRef.current.scrollIntoView({behavior:"smooth"})}}>
                     SNAP PHOTO
                 </Button>
                 <canvas className="picture_canvas" ref={this.canvasRef}>
