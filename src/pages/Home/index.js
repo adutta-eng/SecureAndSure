@@ -5,13 +5,14 @@ import { TextField, Button } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { withRouter } from 'react-router-dom';
-
+import { decryptInfo } from 'util/encryption'
 import * as firebaseUtil from "util/firebase";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      keys: [],
       documents: [],
       searchText: '',
     }
@@ -20,12 +21,21 @@ class Home extends React.Component {
   componentDidMount() {
     firebaseUtil.onUserChange(user => {
       if (user) {
-        firebaseUtil.onAddDocument(documents => {
-          this.setState({documents: Object.values(documents)});
-        });
+        firebaseUtil.getEncryptedPrivateKey().then(encryptedPrivateKey => {
+          firebaseUtil.onAddDocument((documentsObj, keys) => {
+            if (documentsObj) {
+              const encryptedDocuments = Object.values(documentsObj)
+              const documents = encryptedDocuments.map(document => decryptInfo(localStorage.hash, encryptedPrivateKey, document))
+              this.setState({documents, keys});
+            } else {
+              this.setState({documents:[], keys:[]})
+            }
+          });
+        })
       }
     });
   }
+
 
   filteredDocuments() {
     const stringContains = (str, substr) => str.toLowerCase().includes(substr.toLowerCase());
@@ -35,6 +45,7 @@ class Home extends React.Component {
   signOut() {
     firebaseUtil.signOut().then(() => {
       this.props.history.push('/');
+      localStorage.removeItem("hash")
     })
   }
 
@@ -50,7 +61,7 @@ class Home extends React.Component {
         onChange={e => this.setState({searchText: e.target.value})}
       />
 
-      <DocumentView documents={this.filteredDocuments()}/>
+      <DocumentView documents={this.filteredDocuments()} keys={this.state.keys}/>
 
       <Button className="logout-button" onClick={() => this.signOut()}>Sign Out</Button>
     </div>

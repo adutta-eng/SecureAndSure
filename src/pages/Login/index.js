@@ -3,7 +3,7 @@ import { TextField, Button } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import { withRouter } from 'react-router-dom';
-
+import { generateKeys, generateHash } from 'util/encryption'
 import * as firebaseUtil from "util/firebase";
 import './styles.sass';
 
@@ -36,6 +36,7 @@ class Login extends React.Component {
     const { email, password } = this.state.login;
     firebaseUtil.signIn(email, password).then(() => {
       this.props.history.push('/home');
+      localStorage.hash = generateHash(password)
     }).catch(error => {
       // show error message
     });
@@ -45,24 +46,36 @@ class Login extends React.Component {
   signUp(e) {
     const { email, password, repeatPassword } = this.state.signup
     if (password === repeatPassword) {
-      firebaseUtil.signUp(email, password).then(() => {
-      this.props.history.push('/home');
+      const keys = generateKeys(password)
+      firebaseUtil.signUp(email, password, keys).then(() => {
+        this.props.history.push('/home');
+        localStorage.hash = generateHash(password)
       }).catch(error => {
+        console.log(error)
         // display error message
       })
     } else {
       // tell user that passwords don't match
+      alert("Passwords don't match")
     }
     e.preventDefault();
+  }
+
+  header(fake = false) {
+    // fake headers have {visibility: hidden} and are used for spacing
+    const className = 'header ' + (fake ? 'fake' : '');
+    return (
+      <div className={className}>
+        {/* This icon is temporary (until we have an actual icon) */}
+        <FontAwesomeIcon className="icon" icon={faShieldAlt}/>
+      </div>
+    )
   }
 
   render() {
     return (
       <div className="login-page">
-        <div className="header">
-          {/* This icon is temporary (until we have an actual icon) */}
-          <FontAwesomeIcon className="icon" icon={faShieldAlt}/>
-        </div>
+        {this.header()}
 
         <div className="container">
           <form className="login-form" onSubmit={e => this.login(e)}>
@@ -130,6 +143,8 @@ class Login extends React.Component {
             </Button>
           </form>
         </div>
+
+        {this.header(true)}
       </div>
     );
   }
